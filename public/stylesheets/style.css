@@ -22884,7 +22884,7 @@ code {
   align-items: stretch;
   -webkit-justify-content: stretch;
   justify-content: stretch;
-  margin-bottom: 30px;
+  /* margin-bottom: 30px; */
 }
 
 .stretch-card>.card {

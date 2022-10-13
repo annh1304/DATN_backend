@@ -29,6 +29,7 @@ var usersRouter = require('./routes/users');
 var productRouter = require('./routes/product');
 var chartsRouter = require('./routes/charts');
 var apiRouter = require('./routes/api');
+var categoriesRouter = require('./routes/categories');
 
 var app = express();
 
@@ -44,10 +45,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 //import pack
 app.use(session({
-  secret:'heybro',
+  secret: 'heybro',
   resave: true,
-  saveUninitialized:true,
-  cookie:{secure:false}
+  saveUninitialized: true,
+  cookie: { secure: false }
 }));
 
 //http://localhost:1304/
@@ -56,15 +57,16 @@ app.use('/nguoi-dung', usersRouter);
 app.use('/san-pham', productRouter);
 app.use('/thong-ke', chartsRouter);
 app.use('/api', apiRouter);
+app.use('/danh-muc', categoriesRouter);
 // app.use('/product', productRouter);
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
