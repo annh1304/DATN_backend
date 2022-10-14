@@ -1,13 +1,23 @@
 const productService = require('./product_service');
 const categoryService = require('../categories/category_service');
 
-const getAll = async (page, size) =>{
+const getAll = async (page, size) => {
     page = page || 1;
     size = size || 5;
-    return await productService.getAll(page, size);
+    let products = await productService.getAll(page, size);
+
+    products = products.map(product => {
+        product = {
+            ...product?._doc,
+            category_id: product.category_id,// object;
+        }
+        return product;
+    });
+
+    return products;
 }
 
-const getById = async (id) =>{
+const getById = async (id) => {
     //select id, name from product...
     const product = await productService.getById(id);
     let categories = await categoryService.get();
@@ -22,31 +32,31 @@ const getById = async (id) =>{
     //     return category;
     // }); 
     //new
-    categories = categories.map(category =>{
+    categories = categories.map(category => {
         let c = {
-            _id : category._id,
-            name : category.name,
-            description : category.description,
-            isSelected : false
+            _id: category._id,
+            name: category.name,
+            description: category.description,
+            isSelected: false
         }
-        if (product.category_id.toString() == c._id.toString()){
-                 c.isSelected = true;
+        if (product.category_id.toString() == c._id.toString()) {
+            c.isSelected = true;
         }
         return c;
     });
-    return {product, categories};
+    return { product, categories };
 }
 
-const insert = async (product) =>{
+const insert = async (product) => {
     await productService.insert(product);
 }
 
-const update = async (id, product) =>{
+const update = async (id, product) => {
     await productService.update(id, product);
 }
 
-const deleteById = async (id) =>{
+const deleteById = async (id) => {
     await productService.deleteById(id);
 }
 
-module.exports = {getAll, getById, insert, update, deleteById};
+module.exports = { getAll, getById, insert, update, deleteById };

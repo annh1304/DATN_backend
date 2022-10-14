@@ -31,7 +31,8 @@ router.post('/them-san-pham', [middleware.single('image')], async function (req,
   // res.render('empty_product_form', {categories});
   let { body, file } = req;
   if (file) {
-    let image = `https://product-manage-v1.herokuapp.com/images/data/${file.filename}`;
+    // let image = `https://product-manage-v1.herokuapp.com/images/data/${file.filename}`;
+    let image = `/images/data/${file.filename}`;
     // console.log(image);
     body = { ...body, image: image }
   }
@@ -55,9 +56,13 @@ router.post('/detail/:id', [middleware.single('image')], async function (req, re
   const { id } = req.params;
   delete body.image;
   if (file) {
-    let image = `https://product-manage-v1.herokuapp.com/images/data/${file.filename}`;
-    body = { ...body, image: image };
+    let image = `/images/data/${file.filename}`;
+    body = {
+      ...body,
+      image: image
+    };
   }
+  console.log(body);
   await productController.update(id, body);
   res.redirect('/san-pham');
 });
