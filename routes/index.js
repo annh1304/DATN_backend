@@ -3,44 +3,44 @@ var router = express.Router();
 const userController = require('../components/users/user_controller');
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
-  if (!req.session || !req.session.user){
+router.get('/', function (req, res, next) {
+  if (!req.session || !req.session.user) {
     res.redirect('/dang-nhap');
-  }else{
+  } else {
     res.render('index');
   }
 });
 
 // trang đăng nhập
-router.get('/dang-nhap', function(req, res, next){
-  if(req.session.user && req.session){
+router.get('/dang-nhap', function (req, res, next) {
+  if (req.session.user && req.session) {
     res.redirect('/');
   }
-  res.render('login', {title:'login'});
+  res.render('login', { title: 'login' });
 });
-router.get('/dang-xuat', function(req, res, next){
-  req.session.destroy(function(err){
+router.get('/dang-xuat', function (req, res, next) {
+  req.session.destroy(function (err) {
     res.redirect('/dang-nhap');
   });
 });
 
-router.post('/dang-nhap', async function(req, res, next){
+router.post('/dang-nhap', async function (req, res, next) {
   // res.render('login', {title:'login'})
   try {
-    const {username, password} = req.body;
+    const { username, password } = req.body;
     const user = await userController.login(username, password);
     // console.log(user);
-    if(user){
+    if (user) {
       req.session.user = user;
       console.log('.....', req.session.user);
       res.redirect('/');
-    }else{
+    } else {
       res.redirect('/dang-nhap');
     }
   } catch (error) {
-    res.render('error', {message:'looix roiof ddaay nef'});
-  } 
-  
+    res.render('error', { message: 'looix roiof ddaay nef' });
+  }
+
 });
 
 
@@ -57,14 +57,14 @@ router.post('/dang-nhap', async function(req, res, next){
 //examples
 //dò url chạy từ trên xuống;
 // router.get('/dientich', function(req, res, next) {
-  // console.log('from index.js');
-  // res.render('dientich', { title: 'tính diện tích' });
+// console.log('from index.js');
+// res.render('dientich', { title: 'tính diện tích' });
 
 //   let {dai, rong}= req.query;
 //   let dienTich = Number(dai)*Number(rong);
 //   res.render('dientich', {title: 'Hình chữ nhật', info: 'Diện tích', width: dai, height: rong, dienTich});
 //   res.json({dai, rong, dienTich});
-  
+
 // });
 // router.get('/dientich-tamgiac/canh-day/:canhday/chieu-cao/:chieucao', function(req, res, next){
 //   let {canhday, chieucao} = req.params;
@@ -86,6 +86,6 @@ router.post('/dang-nhap', async function(req, res, next){
 //   }else{
 //     res.redirect('/login',)// quay lại trang login (router.get('/login))
 //   }
-  
+
 // });
 module.exports = router;

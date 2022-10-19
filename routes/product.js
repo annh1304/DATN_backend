@@ -46,7 +46,7 @@ router.get('/detail/:id', async function (req, res, next) {
   const { id } = req.params;// hoặc const _id = req.params.id
   const { product, categories } = await productController.getById(id);
   // const categories = await categoryController.get();
-  res.render('product_detail', { product, categories });
+  res.render('product_detail_copy', { product, categories });
   console.log({ product }, id);
 });
 
