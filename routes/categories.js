@@ -7,7 +7,7 @@ const middleware = require('../middleware/upload');
 
 /* GET products listing.
 http://localhost:1304/san-pham */
-router.get('/', async function (req, res, next) {
+router.get('/a', async function (req, res, next) {
     if (!req.session || !req.session.user) {
         res.redirect('/dang-nhap');
     } else {
