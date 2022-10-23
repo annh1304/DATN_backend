@@ -8,7 +8,7 @@ const getAll = async (page, size) => {
 
     products = products.map(product => {
         product = {
-            ...product?._doc,
+            ...product._doc,
             category_id: product.category_id,// object;
         }
         return product;
@@ -20,9 +20,9 @@ const getAll = async (page, size) => {
 const getById = async (id) => {
     //select id, name from product...
     const product = await productService.getById(id);
-    let categories = await categoryService.get();
-    console.log(product);
-    console.log(categories);
+    let categories = await categoryService.getAll();
+    // console.log(product);
+    // console.log(categories);
     // old
     // categories = categories.map(category =>{
     //     category = { ...category, isSelected:false};
@@ -39,7 +39,7 @@ const getById = async (id) => {
             description: category.description,
             isSelected: false
         }
-        if (product.category_id.toString() == c._id.toString()) {
+        if (product.category_id._id.toString() == c._id.toString()) {
             c.isSelected = true;
         }
         return c;

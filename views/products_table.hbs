@@ -286,7 +286,7 @@
           </a>
           <div class="collapse" id="tables">
             <ul class="nav flex-column sub-menu">
-              <li class="nav-item"> <a class="nav-link" href="/san-pham">Products</a></li>
+              <li class="nav-item"> <a class="nav-link" href="/san-pham?size=5&page=1">Products</a></li>
             </ul>
           </div>
           <div class="collapse" id="tables">
@@ -379,6 +379,11 @@
                   </table>
                 </div>
               </div>
+              <div class="changePageContainer">
+                <a class="previousBtn" onclick="changePage('false')">&laquo; Previous</a>
+                <h4 type="number" id="pageNumber" class="pageNumber"></h4>
+                <a class="nextBtn" onclick="changePage('true')">Next &raquo;</a>
+              </div>
             </div>
           </div>
         </div>
@@ -402,6 +407,7 @@
 </div>
 
 <script>
+  // xóa item
   const onRemove = id => {
     swal({
       title: "Are you sure?",
@@ -428,4 +434,44 @@
         }
       });
   }
+
+  //lấy queryString từ url
+  const queryString = window.location.search;
+  //console.log(queryString);
+  // ?page=...&size=...
+  const urlParams = new URLSearchParams(queryString);
+  const page = urlParams.get('page');
+  console.log(page);
+
+  //set số  trang hiện tại vào h4
+  //let numb = document.getElementById("pageNumber").innerHTML;
+  document.getElementById("pageNumber").innerHTML = page;
+
+  if (page == 1) {
+    // Add disabled attribute on
+    // prev button
+    document.getElementsByClassName(
+      'previousBtn').disabled = true;
+
+    // Remove disabled attribute 
+    // from next button 
+    document.getElementsByClassName(
+      'nextBtn').disabled = false;
+  }
+
+
+  function changePage(stat) {
+    // Start position 
+
+    if (stat == 'true') {
+      //console.log(page);
+      const url = `/san-pham?size=5&page=${parseInt(page) + 1}`;
+      window.location.replace(url);
+    } else if (stat == 'false') {
+      const url = `/san-pham?size=5&page=${parseInt(page) - 1}`;
+      window.location.replace(url);
+    }
+  }
+
+
 </script>

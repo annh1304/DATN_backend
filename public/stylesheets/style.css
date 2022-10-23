@@ -35613,4 +35613,47 @@ div.tagsinput span.tag a {
   }
 }
 
+
+
+/* button chuyển trang */
+.previousBtn,
+.nextBtn,
+.pageNumber {
+  text-decoration: none;
+  display: inline-block;
+  padding: 8px 16px;
+  margin-top: 20px;
+}
+
+.changePageContainer {
+  align-self: flex-end;
+  margin-bottom: 20px;
+  margin-top: -20px;
+  width: 20%;
+}
+
+.previousBtn:hover,
+.nextBtn:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+.previousBtn {
+  background-color: #f1f1f1;
+  color: black;
+}
+
+.nextBtn {
+  background-color: #04AA6D;
+  color: white;
+}
+
+.pageNumber {
+  width: 50px;
+  padding: 0px;
+  text-align: center;
+}
+
+
+
 /*# sourceMappingURL=../maps/vertical-layout-light/style.css.map */

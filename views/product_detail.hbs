@@ -302,7 +302,7 @@
           </a>
           <div class="collapse" id="tables">
             <ul class="nav flex-column sub-menu">
-              <li class="nav-item"> <a class="nav-link" href="/san-pham">Products</a></li>
+              <li class="nav-item"> <a class="nav-link" href="/san-pham?size=5&page=1">Products</a></li>
             </ul>
           </div>
           <div class="collapse" id="tables">
@@ -350,7 +350,7 @@
                   Basic form elements
                 </p>
                 <form action="/san-pham/detail/{{product._id}}" method="post" class="forms-sample"
-                  enctype="multipart/form-data" accept-charset="utf-8">
+                  enctype="multipart/form-data" accept-charset="utf-8" style="width: 50%;">
                   <div class="form-group">
                     <label for="exampleInputName1">Product ID</label>
                     <input type="text" class="form-control" id="productId" name="productId" data-type="input-textbox"
@@ -367,11 +367,16 @@
                       placeholder="Enter Quantity" value="{{product.quantity}}">
                   </div>
                   <div class="form-group">
+                    <label for="exampleInputPassword4">Price</label>
+                    <input type="number" id="price" name="price" data-type="input-textbox" class="form-control"
+                      placeholder="Enter Price" value="{{product.price}}">
+                  </div>
+                  <div class="form-group">
                     <label for="exampleSelectGender">categories</label>
-                    <select class="form-control" id="categories" name="categories">
+                    <select class="form-control" id="categories" name="category_id">
                       {{#each categories}}
                       {{#if this.isSelected}}
-                      <option selected id="category" name="category_id" value="{{this._id}}">{{this.name}}
+                      <option selected value="{{this._id}}">{{this.name}}
                       </option>
                       {{else}}
                       <option value="{{this._id}}">{{this.name}}</option>
