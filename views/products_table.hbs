@@ -358,20 +358,20 @@
                       </tr>
                     </thead>
                     <tbody>
-                      {{#each products}}
+                      {{#each rows}}
                       <tr class="table-info">
-                        <td>{{this.name}}</td>
-                        <td>{{this.price}}</td>
+                        <td>{{this.FULLNAME}}</td>
+                        <td>{{this.PRICE}}</td>
                         {{!-- <td>{{this.quantity}}</td> --}}
-                        <td>{{this.category_id.name}}</td>
+                        <td>{{this.CATNAME}}</td>
                         <td>
-                          <img src="{{this.image}}">
+                          <img src="{{this.IMAGE}}">
                         </td>
                         <td>
-                          <button><a href="/san-pham/detail/{{this._id}}">Details</a></button>
+                          <button><a href="/san-pham/detail/{{this.FOODID}}">Details</a></button>
                         </td>
                         <td>
-                          <a href="#" class="btn btn-link" onclick="onRemove('{{this._id}}')">Delete</a>
+                          <a href="#" class="btn btn-link" onclick="onRemove('{{this.FOODID}}')">Delete</a>
                         </td>
                       </tr>
                       {{/each}}
@@ -380,9 +380,9 @@
                 </div>
               </div>
               <div class="changePageContainer">
-                <a class="previousBtn" onclick="changePage('false')">&laquo; Previous</a>
+                <a class="previousBtn" onclick="changePage(false)">&laquo; Previous</a>
                 <h4 type="number" id="pageNumber" class="pageNumber"></h4>
-                <a class="nextBtn" onclick="changePage('true')">Next &raquo;</a>
+                <a class="nextBtn" onclick="changePage(true)">Next &raquo;</a>
               </div>
             </div>
           </div>
@@ -447,29 +447,20 @@
   //let numb = document.getElementById("pageNumber").innerHTML;
   document.getElementById("pageNumber").innerHTML = page;
 
-  if (page == 1) {
-    // Add disabled attribute on
-    // prev button
-    document.getElementsByClassName(
-      'previousBtn').disabled = true;
-
-    // Remove disabled attribute 
-    // from next button 
-    document.getElementsByClassName(
-      'nextBtn').disabled = false;
-  }
-
 
   function changePage(stat) {
     // Start position 
 
-    if (stat == 'true') {
+    if (stat == true) {
       //console.log(page);
       const url = `/san-pham?size=5&page=${parseInt(page) + 1}`;
       window.location.replace(url);
-    } else if (stat == 'false') {
-      const url = `/san-pham?size=5&page=${parseInt(page) - 1}`;
-      window.location.replace(url);
+    } else if (stat == false) {
+      if (parseInt(page) != 1) {
+        const url = `/san-pham?size=5&page=${parseInt(page) - 1}`;
+        window.location.replace(url);
+      }
+
     }
   }
 

@@ -1,4 +1,16 @@
 const productModel = require('./product_model');
+var mysql = require('mysql');
+
+//connect to mysql
+const pool = mysql.createPool({
+  connectionLimit: 100,
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASS,
+  database: process.env.DB_NAME
+});
+
+
 
 const getAll = async (page, size) => {
   //tìm theo trang 
@@ -7,11 +19,26 @@ const getAll = async (page, size) => {
 
   // find({}) = điều kiện, vd: where name ....
   // page:2, size:3 || skip bỏ qua sp đầu
-  const items = await productModel.find({}).populate("category_id")
-    .skip((page - 1) * size)
-    .limit(size);
-  console.log(items);
-  return items;
+
+  // const items = await productModel.find({}).populate("category_id")
+  //   .skip((page - 1) * size)
+  //   .limit(size);
+  // console.log(items);
+  // return items;
+
+  pool.getConnection((err, connection) => {
+    if (err) throw err; // not connected
+
+    connection.query('SELECT * FROM TBLFOOD', (err, rows) => {
+      connection.release();
+      if (!err) {
+        return rows;
+      } else {
+        console.log(err);
+      }
+    })
+  });
+
 }
 
 const getById = async (id) => {

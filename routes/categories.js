@@ -8,22 +8,22 @@ const middleware = require('../middleware/upload');
 /* GET products listing.
 http://localhost:1304/san-pham */
 router.get('/', async function (req, res, next) {
-    if (!req.session || !req.session.user) {
-        res.redirect('/dang-nhap');
-    } else {
-        const { page, size } = req.query;
-        const products = await productController.getAll(page, size);
-        res.render('categories_table', { products });
-    }
+    // if (!req.session || !req.session.user) {
+    //     res.redirect('/dang-nhap');
+    // } else {
+    const { page, size } = req.query;
+    const products = await productController.getAll(page, size);
+    res.render('categories_table', { products });
+    // }
 });
 //Add product http://localhost:1304/san-pham/them-san-pham*/
 router.get('/them-danh-muc', async function (req, res, next) {
-    if (!req.session || !req.session.user) {
-        res.redirect('/dang-nhap');
-    } else {
-        // const categories = await categoryController.get();
-        res.render('empty_category_form');
-    }
+    // if (!req.session || !req.session.user) {
+    //     res.redirect('/dang-nhap');
+    // } else {
+    // const categories = await categoryController.get();
+    res.render('empty_category_form');
+    // }
 })
 //middleware
 router.post('/them-danh-muc', [middleware.single('image')], async function (req, res, next) {

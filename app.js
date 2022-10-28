@@ -4,24 +4,32 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
+var mysql = require('mysql');
+var exphbs = require('express-handlebars');
+var bodyParser = require('body-parser');
+
+require('dotenv').config();
+
 // const hbs = require('hbs');
 // const helper = require('./helpers/HBSHelpers');
 // hbs.registerHelper('ifEqual', helper.ifEqual);
 const session = require('express-session');
-const mongoose = require('mongoose');
-//theo thứ tự user>category>product.
-require('./components/users/user_model');
-require('./components/categories/category_model');
-require('./components/products/product_model');
 
 //mongodb+srv://antroipro123:<password>@cluster0.ayktqy8.mongodb.net/?retryWrites=true&w=majority
+//Tạo connection mysql;
 
-mongoose.connect('mongodb+srv://antroipro123:aloalo123@cluster0.ayktqy8.mongodb.net/NODEJS_PROJECT?retryWrites=true&w=majority', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-})
-  .then(() => console.log('>>>>>>>>>> DB Connected!!!!!!'))
-  .catch(err => console.log('>>>>>>>>> DB Error: ', err));
+const pool = mysql.createPool({
+  connectionLimit: 100,
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASS,
+  database: process.env.DB_NAME
+});
+
+pool.getConnection((err, connection) => {
+  if (err) throw err; // not connected
+  console.log('Connected as ID ' + connection.threadId);
+});
 
 //khai báo đường dẫn routers
 var indexRouter = require('./routes/index');
@@ -30,11 +38,13 @@ var productRouter = require('./routes/product');
 var chartsRouter = require('./routes/charts');
 var apiRouter = require('./routes/api');
 var categoriesRouter = require('./routes/categories');
+//const { connection } = require('mongoose');
 
 var app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
+// app.engine('hbs', exphbs({ extname: '.hbs' }));
 app.set('view engine', 'hbs');
 
 app.use(logger('dev'));
@@ -44,6 +54,12 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 //import pack
+//parse application/x-www-form-urlencoded;
+app.use(bodyParser.urlencoded({ extended: false }));
+//Parse application.json
+app.use(bodyParser.json());
+
+// app.use(express.static('public'));
 app.use(session({
   secret: 'heybro',
   resave: true,
@@ -51,7 +67,7 @@ app.use(session({
   cookie: { secure: false }
 }));
 
-//http://localhost:1304/
+//http://localhost:5000/
 app.use('/', indexRouter);
 app.use('/nguoi-dung', usersRouter);
 app.use('/san-pham', productRouter);

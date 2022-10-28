@@ -4,16 +4,16 @@ const userController = require('../components/users/user_controller');
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
-  if (!req.session || !req.session.user) {
-    res.redirect('/dang-nhap');
-  } else {
-    res.render('index');
-  }
+  // if (!req.session || !req.session.username) {
+  //   res.redirect('/dang-nhap');
+  // } else {
+  res.render('index');
+  // }
 });
 
 // trang đăng nhập
 router.get('/dang-nhap', function (req, res, next) {
-  if (req.session.user && req.session) {
+  if (req.session.username && req.session) {
     res.redirect('/');
   }
   res.render('login', { title: 'login' });
@@ -24,24 +24,7 @@ router.get('/dang-xuat', function (req, res, next) {
   });
 });
 
-router.post('/dang-nhap', async function (req, res, next) {
-  // res.render('login', {title:'login'})
-  try {
-    const { username, password } = req.body;
-    const user = await userController.login(username, password);
-    // console.log(user);
-    if (user) {
-      req.session.user = user;
-      console.log('.....', req.session.user);
-      res.redirect('/');
-    } else {
-      res.redirect('/dang-nhap');
-    }
-  } catch (error) {
-    res.render('error', { message: 'looix roiof ddaay nef' });
-  }
-
-});
+router.post('/dang-nhap', userController.login);
 
 
 
@@ -53,6 +36,24 @@ router.post('/dang-nhap', async function (req, res, next) {
 
 
 
+// router.post('/dang-nhap', async function (req, res, next) {
+//   // res.render('login', {title:'login'})
+//   try {
+//     const { username, password } = req.body;
+//     const user = await userController.login(username, password);
+//     // console.log(user);
+//     if (user) {
+//       req.session.user = user;
+//       console.log('.....', req.session.user);
+//       res.redirect('/');
+//     } else {
+//       res.redirect('/dang-nhap');
+//     }
+//   } catch (error) {
+//     res.render('error', { message: 'looix roiof ddaay nef' });
+//   }
+
+// });
 
 //examples
 //dò url chạy từ trên xuống;

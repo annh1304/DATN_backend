@@ -5,18 +5,31 @@ const productController = require('../components/products/product_controller');
 const categoryController = require('../components/categories/category_controller');
 const middleware = require('../middleware/upload');
 
-/* GET products listing.
-http://localhost:1304/san-pham */
+
+router.get('/', productController.getAll);
+// router.get('/them-san-pham', productController);
+// router.post('/them-san-pham', productController);
+router.get('/detail/:id', productController.getById);
+// router.post('/detail/:id', productController);
+// router.post('/remove/:id', productController);
+
+module.exports = router;
+
+/*
+
+// GET products listing.
+//http://localhost:1304/san-pham 
 router.get('/', async function (req, res, next) {
-  if (!req.session || !req.session.user) {
-    res.redirect('/dang-nhap');
-  } else {
-    const { page, size } = req.query;
-    const products = await productController.getAll(page, size);
-    res.render('products_table', { products });
-  }
+  // if (!req.session || !req.session.user) {
+  //   res.redirect('/dang-nhap');
+  // } else {
+  const { page, size } = req.query;
+  const products = await productController.getAll(page, size);
+  console.log('allFood', products);
+  // res.render('products_table', { products });
+  // }
 });
-//Add product http://localhost:1304/san-pham/them-san-pham*/
+//Add product http://localhost:1304/san-pham/them-san-pham
 router.get('/them-san-pham', async function (req, res, next) {
   if (!req.session || !req.session.user) {
     res.redirect('/dang-nhap');
@@ -40,8 +53,8 @@ router.post('/them-san-pham', [middleware.single('image')], async function (req,
 
   res.redirect('/san-pham');
 });
-/*Get product by ID
-http://localhost:1304/san-pham*/
+// Get product by ID
+// http://localhost:1304/san-pham
 router.get('/detail/:id', async function (req, res, next) {
   const { id } = req.params;// hoặc const _id = req.params.id
   const { product, categories } = await productController.getById(id);
@@ -72,4 +85,8 @@ router.post('/remove/:id', async function (req, res, next) {
   await productController.deleteById(id);
   res.json({ success: true });
 });
+
 module.exports = router;
+*/
+
+

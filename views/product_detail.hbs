@@ -349,37 +349,39 @@
                 <p class="card-description">
                   Basic form elements
                 </p>
-                <form action="/san-pham/detail/{{product._id}}" method="post" class="forms-sample"
+                {{#each food as |foodhbs|}}
+                <form action="/san-pham/detail/{{foodhbs.FOODID}}" method="post" class="forms-sample"
                   enctype="multipart/form-data" accept-charset="utf-8" style="width: 50%;">
                   <div class="form-group">
                     <label for="exampleInputName1">Product ID</label>
                     <input type="text" class="form-control" id="productId" name="productId" data-type="input-textbox"
-                      value="{{product._id}}" disabled>
+                      value="{{foodhbs.FOODID}}" disabled>
                   </div>
                   <div class="form-group">
                     <label for="exampleInputEmail3">Product Name</label>
                     <input type="text" id="name" name="name" data-type="input-textbox" class="form-control"
-                      placeholder="Enter Product Name" value="{{product.name}}">
+                      placeholder="Enter Product Name" value="{{foodhbs.FULLNAME}}">
                   </div>
                   <div class="form-group">
                     <label for="exampleInputPassword4">Quantity</label>
                     <input type="number" id="quantity" name="quantity" data-type="input-textbox" class="form-control"
-                      placeholder="Enter Quantity" value="{{product.quantity}}">
+                      placeholder="Enter Quantity" value="{{foodhbs.QUANTITY}}">
                   </div>
                   <div class="form-group">
                     <label for="exampleInputPassword4">Price</label>
                     <input type="number" id="price" name="price" data-type="input-textbox" class="form-control"
-                      placeholder="Enter Price" value="{{product.price}}">
+                      placeholder="Enter Price" value="{{foodhbs.PRICE}}">
                   </div>
+                  {{/each}}
                   <div class="form-group">
                     <label for="exampleSelectGender">categories</label>
                     <select class="form-control" id="categories" name="category_id">
                       {{#each categories}}
                       {{#if this.isSelected}}
-                      <option selected value="{{this._id}}">{{this.name}}
+                      <option selected value="{{this.CATID}}">{{this.CATNAME}}
                       </option>
                       {{else}}
-                      <option value="{{this._id}}">{{this.name}}</option>
+                      <option value="{{this.CATID}}">{{this.CATNAME}}</option>
                       {{/if}}
                       {{/each}}
                     </select>
@@ -395,7 +397,9 @@
                   <div class="form-group">
                     <label>File upload</label>
                     <div id="cid_7" class="form-input-wide">
-                      <img src="{{product.image}}" id="image-view" alt="product image">
+                      {{#each food as |foodhbs|}}
+                      <img src="{{foodhbs.IMAGE}}" id="image-view" alt="product image">
+                      {{/each}}
                     </div>
                     <div class="input-group col-xs-12">
                       <input type="file" id="image-file" name="image" class=" file-upload-browse btn btn-primary"

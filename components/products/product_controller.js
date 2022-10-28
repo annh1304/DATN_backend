@@ -1,21 +1,81 @@
 const productService = require('./product_service');
 const categoryService = require('../categories/category_service');
+var mysql = require('mysql')
 
-const getAll = async (page, size) => {
-    page = page || 1;
-    size = size || 5;
-    let products = await productService.getAll(page, size);
+const pool = mysql.createPool({
+    connectionLimit: 100,
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASS,
+    database: process.env.DB_NAME
+});
 
-    products = products.map(product => {
-        product = {
-            ...product._doc,
-            category_id: product.category_id,// object;
-        }
-        return product;
+
+exports.getAll = async (req, res) => {
+    const page = req.query.page;
+
+    const from = (parseInt(page) - 1) * 5;
+    const tO = parseInt(page) * 5;
+
+    pool.getConnection((err, connection) => {
+        if (err) throw err; // not connected
+
+        connection.query(`SELECT TBLFOOD.FOODID, TBLFOOD.FULLNAME, TBLFOOD.PRICE, TBLFOOD.IMAGE, TBLCATEGORIES.CATNAME FROM TBLFOOD INNER JOIN TBLCATEGORIES ON TBLFOOD.CATID = TBLCATEGORIES.CATID WHERE TBLFOOD.FOODID BETWEEN ${parseInt(from) + 1} AND ${tO}`, (err, rows) => {
+            connection.release();
+            if (!err) {
+
+                res.render('products_table', { rows });
+            } else {
+                console.log(err);
+            }
+        })
+    });
+}
+
+exports.getById = async (req, res) => {
+    const { id } = req.params;
+
+    //getFood;
+    pool.getConnection((err, connection) => {
+        if (err) throw err; // not connected
+        connection.query(`SELECT * FROM TBLFOOD WHERE FOODID = ${id}`, function (err, food) {
+            if (err) {
+                return console.log('error: ' + err.message);
+            }
+            connection.query(`SELECT CATID, CATNAME FROM TBLCATEGORIES`, function (err, categories) {
+                if (err) {
+                    return console.log('error: ' + err.message);
+                }
+                categories = categories.map(category => {
+                    let c = {
+                        CATID: category.CATID,
+                        CATNAME: category.CATNAME,
+                        isSelected: false
+                    }
+                    if (food[0].CATID.toString() === c.CATID.toString()) {
+                        c.isSelected = true;
+                    }
+                    return c;
+                });
+
+                console.log(categories, food);
+
+                res.render('product_detail', { food, categories });
+            });
+        });
     });
 
-    return products;
+
+
+
+
+
 }
+
+
+// module.exports = new ProductController();
+
+/*
 
 const getById = async (id) => {
     //select id, name from product...
@@ -60,3 +120,5 @@ const deleteById = async (id) => {
 }
 
 module.exports = { getAll, getById, insert, update, deleteById };
+
+*/
