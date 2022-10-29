@@ -20,7 +20,7 @@ exports.getAll = async (req, res) => {
     pool.getConnection((err, connection) => {
         if (err) throw err; // not connected
 
-        connection.query(`SELECT TBLFOOD.FOODID, TBLFOOD.FULLNAME, TBLFOOD.PRICE, TBLFOOD.IMAGE, TBLCATEGORIES.CATNAME FROM TBLFOOD INNER JOIN TBLCATEGORIES ON TBLFOOD.CATID = TBLCATEGORIES.CATID WHERE TBLFOOD.FOODID BETWEEN ${parseInt(from) + 1} AND ${tO}`, (err, rows) => {
+        connection.query(`SELECT TBLFOOD.FOODID, TBLFOOD.FOODNAME, TBLFOOD.PRICE, TBLFOOD.IMAGE, TBLCATEGORIES.CATNAME FROM TBLFOOD INNER JOIN TBLCATEGORIES ON TBLFOOD.CATID = TBLCATEGORIES.CATID WHERE TBLFOOD.FOODID BETWEEN ${parseInt(from) + 1} AND ${tO}`, (err, rows) => {
             connection.release();
             if (!err) {
 
@@ -65,11 +65,47 @@ exports.getById = async (req, res) => {
         });
     });
 
+}
 
+exports.update = async (req, res) => {
+    let { body, file } = req;
+    const { id } = req.params;
 
+    let query = ``;
 
+    delete body.image;
+    if (file) {
+        let image = `/images/data/${file.filename}`;
+        body = {
+            ...body,
+            image: image
+        };
+        query = `UPDATE TBLFOOD
+            SET FOODNAME = '${body.name}', QUANTITY = ${body.quantity}, PRICE = ${body.price}
+            , CATID = ${body.category_id}, IMAGE = '${body.image}'
+            WHERE FOODID = ${id};`
+    }
+    if (!body.image) {
+        delete body.image;
+        query = `UPDATE TBLFOOD
+            SET FOODNAME = '${body.name}', QUANTITY = ${body.quantity}, PRICE = ${body.price}
+            , CATID = ${body.category_id} WHERE FOODID = ${id};`;
+    } else {
 
+    }
+    console.log('body', body);
+    pool.getConnection((err, connection) => {
+        if (err) throw err; // not connected
 
+        connection.query(query, (err, rows) => {
+            connection.release();
+            if (!err) {
+                res.redirect('/san-pham?size=5&page=1');
+            } else {
+                console.log(err);
+            }
+        })
+    });
 }
 
 

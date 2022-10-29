@@ -10,7 +10,7 @@ router.get('/', productController.getAll);
 // router.get('/them-san-pham', productController);
 // router.post('/them-san-pham', productController);
 router.get('/detail/:id', productController.getById);
-// router.post('/detail/:id', productController);
+router.post('/detail/:id', [middleware.single('image')], productController.update);
 // router.post('/remove/:id', productController);
 
 module.exports = router;

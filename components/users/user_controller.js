@@ -1,4 +1,5 @@
-//
+var express = require('express');
+var router = express.Router();
 const userService = require('./user_service');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -19,21 +20,24 @@ exports.login = async (req, res) => {
         pool.getConnection((err, connection) => {
             if (err) throw err; // not connected
 
-            connection.query(`SELECT USERNAME, PASSWORD FROM TBLUSER WHERE USERNAME = '${username}' AND PASSWORD = '${password}'`, (err, user) => {
+            connection.query(`SELECT USERNAME, PASSWORD FROM TBLUSER WHERE USERNAME = '${username}' AND PASSWORD = '${password}' AND ROLE = 0`, (err, user) => {
                 connection.release();
                 console.log('user', user);
+
                 if (!err) {
                     if (user.length > 0) {
                         req.session.username = username;
                         console.log('.....', req.session.username);
                         res.redirect('/');
+                    } else {
+                        res.redirect('/dang-nhap');
+                        console.log('err', 'dang nhap k thanh cong');
                     }
-                    res.redirect('/dang-nhap');
-                    console.log('err', 'dang nhap k thanh cong');
                 } else {
-                    console.log(err);
                     res.redirect('/dang-nhap');
+                    console.log(err);
                 }
+
             });
         });
     } catch (error) {

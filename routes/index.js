@@ -4,11 +4,11 @@ const userController = require('../components/users/user_controller');
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
-  // if (!req.session || !req.session.username) {
-  //   res.redirect('/dang-nhap');
-  // } else {
-  res.render('index');
-  // }
+  if (!req.session || !req.session.username) {
+    res.redirect('/dang-nhap');
+  } else {
+    res.render('index');
+  }
 });
 
 // trang đăng nhập
