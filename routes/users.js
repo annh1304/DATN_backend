@@ -11,4 +11,10 @@ router.get('/', function (req, res, next) {
   }
 });
 
+
+router.get('/', userController.getAll);
+router.get('/thong-tin-nguoi-dung/:username', userController.getById);
+router.post('/thong-tin-nguoi-dung/:username', userController.banUser);
+
+
 module.exports = router;

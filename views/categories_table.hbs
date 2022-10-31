@@ -353,46 +353,40 @@
                                         <thead>
                                             <tr>
                                                 <th>
-                                                    Id
-                                                </th>
-                                                <th>
                                                     Name
                                                 </th>
                                                 <th>
-                                                    Price
+                                                    Total foods
                                                 </th>
                                                 {{!-- <th>
                                                     Quantity
                                                 </th> --}}
                                                 <th>
-                                                    Category id
-                                                </th>
-                                                <th>
                                                     Image
                                                 </th>
                                                 <th>
-                                                    See more
+                                                    Options
                                                 </th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {{#each products}}
+                                            {{#each rows}}
                                             <tr class="table-info">
-                                                <td>{{this._id}}</td>
-                                                <td>{{this.name}}</td>
-                                                <td>{{this.price}}</td>
+                                                <td><input id="categoryNameInput{{this.CATID}}" type="text"
+                                                        value="{{this.CATNAME}}" disabled /></td>
+                                                <td>NaN</td>
+                                                <td> <img src="{{this.IMAGE}}" alt=""></td>
+                                                <td><button id="btnEditCategory{{this.CATID}}"
+                                                        onclick="onEditChange('{{this.CATID}}')">Edit</button>
+                                                </td>
                                                 {{!-- <td>{{this.quantity}}</td> --}}
-                                                <td>{{this.category_id}}</td>
-                                                <td>
-                                                    <img src="{{this.image}}">
-                                                </td>
-                                                <td>
+                                                {{!-- <td>
                                                     <button><a href="/san-pham/detail/{{this._id}}">Details</a></button>
-                                                </td>
-                                                <td>
+                                                </td> --}}
+                                                {{!-- <td>
                                                     <a href="#" class="btn btn-link"
                                                         onclick="onRemove('{{this._id}}')">Delete</a>
-                                                </td>
+                                                </td> --}}
                                             </tr>
                                             {{/each}}
                                         </tbody>
@@ -448,5 +442,20 @@
                         });
                 }
             });
+    }
+
+    const onEditChange = id => {
+
+        let editStatus = document.getElementById(`btnEditCategory${id}`).innerHTML;
+        console.log(editStatus);
+        if (editStatus == 'Edit') {
+            document.getElementById(`categoryNameInput${id}`).disabled = false;
+            document.getElementById(`btnEditCategory${id}`).innerHTML = "Save";
+        } else if (editStatus == 'Save') {
+            document.getElementById(`categoryNameInput${id}`).disabled = true;
+            document.getElementById(`btnEditCategory${id}`).innerHTML = "Edit";
+        }
+
+
     }
 </script>

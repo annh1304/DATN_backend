@@ -1,70 +1,88 @@
 const productService = require('./product_service');
 const categoryService = require('../categories/category_service');
-var mysql = require('mysql')
-
-const pool = mysql.createPool({
-    connectionLimit: 100,
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASS,
-    database: process.env.DB_NAME
-});
+const pool = require('../../web_connect');
 
 
 exports.getAll = async (req, res) => {
-    const page = req.query.page;
+    if (!req.session || !req.session.user) {
+        res.redirect('/dang-nhap');
+    } else {
+        const page = req.query.page;
+        const skip = (parseInt(page) - 1) * 5;
+        // const tO = parseInt(page) * 5;
 
-    const from = (parseInt(page) - 1) * 5;
-    const tO = parseInt(page) * 5;
+        pool.getConnection((err, connection) => {
+            if (err) throw err; // not connected
 
-    pool.getConnection((err, connection) => {
-        if (err) throw err; // not connected
+            // connection.query(`SELECT TBLFOOD.FOODID, TBLFOOD.FOODNAME, TBLFOOD.PRICE, TBLFOOD.IMAGE, TBLFOOD.STATUS, TBLCATEGORIES.CATNAME FROM TBLFOOD INNER JOIN TBLCATEGORIES ON TBLFOOD.CATID = TBLCATEGORIES.CATID WHERE TBLFOOD.FOODID BETWEEN ${parseInt(from) + 1} AND ${tO}`, (err, rows) => {
+            connection.query(`SELECT TBLFOOD.FOODID, TBLFOOD.FOODNAME, TBLFOOD.PRICE, TBLFOOD.IMAGE, TBLFOOD.STATUS, TBLCATEGORIES.CATNAME FROM TBLFOOD INNER JOIN TBLCATEGORIES ON TBLFOOD.CATID = TBLCATEGORIES.CATID LIMIT 5 OFFSET ${skip}`, (err, rows) => {
+                connection.release();
+                if (!err) {
+                    rows = rows.map(row => {
+                        row = { ...row };
+                        if (row.STATUS.toString() == 'removed') {
+                            row.STATUS = true;
+                        } else {
+                            row.STATUS = false;
+                        }
+                        return row;
+                    });
+                    res.render('products_table', { rows });
+                } else {
+                    console.log(err);
+                }
+            })
+        });
 
-        connection.query(`SELECT TBLFOOD.FOODID, TBLFOOD.FOODNAME, TBLFOOD.PRICE, TBLFOOD.IMAGE, TBLCATEGORIES.CATNAME FROM TBLFOOD INNER JOIN TBLCATEGORIES ON TBLFOOD.CATID = TBLCATEGORIES.CATID WHERE TBLFOOD.FOODID BETWEEN ${parseInt(from) + 1} AND ${tO}`, (err, rows) => {
-            connection.release();
-            if (!err) {
-
-                res.render('products_table', { rows });
-            } else {
-                console.log(err);
-            }
-        })
-    });
+    }
 }
 
 exports.getById = async (req, res) => {
-    const { id } = req.params;
-
-    //getFood;
-    pool.getConnection((err, connection) => {
-        if (err) throw err; // not connected
-        connection.query(`SELECT * FROM TBLFOOD WHERE FOODID = ${id}`, function (err, food) {
-            if (err) {
-                return console.log('error: ' + err.message);
-            }
-            connection.query(`SELECT CATID, CATNAME FROM TBLCATEGORIES`, function (err, categories) {
+    if (!req.session || !req.session.user) {
+        res.redirect('/dang-nhap');
+    } else {
+        const { id } = req.params;
+        //getFood;
+        pool.getConnection((err, connection) => {
+            if (err) throw err; // not connected
+            connection.query(`SELECT * FROM TBLFOOD WHERE FOODID = ${id}`, function (err, food) {
                 if (err) {
                     return console.log('error: ' + err.message);
                 }
-                categories = categories.map(category => {
-                    let c = {
-                        CATID: category.CATID,
-                        CATNAME: category.CATNAME,
-                        isSelected: false
+                connection.query(`SELECT CATID, CATNAME FROM TBLCATEGORIES`, function (err, categories) {
+                    if (err) {
+                        return console.log('error: ' + err.message);
                     }
-                    if (food[0].CATID.toString() === c.CATID.toString()) {
-                        c.isSelected = true;
-                    }
-                    return c;
+                    categories = categories.map(category => {
+                        let c = {
+                            CATID: category.CATID,
+                            CATNAME: category.CATNAME,
+                            isSelected: false
+                        }
+                        if (food[0].CATID.toString() === c.CATID.toString()) {
+                            c.isSelected = true;
+                        }
+                        return c;
+                    });
+
+                    status = status.map(sts => {
+                        let s = {
+                            ...sts,
+                            isSelected: false
+                        }
+                        if (food[0].STATUS.toString() === s.name.toString()) {
+                            s.isSelected = true;
+                        }
+                        return s;
+                    })
+
+                    // console.log(categories, food);
+
+                    res.render('product_detail', { food, categories, status });
                 });
-
-                console.log(categories, food);
-
-                res.render('product_detail', { food, categories });
             });
         });
-    });
-
+    }
 }
 
 exports.update = async (req, res) => {
@@ -82,17 +100,16 @@ exports.update = async (req, res) => {
         };
         query = `UPDATE TBLFOOD
             SET FOODNAME = '${body.name}', QUANTITY = ${body.quantity}, PRICE = ${body.price}
-            , CATID = ${body.category_id}, IMAGE = '${body.image}'
+            , CATID = ${body.category_id}, IMAGE = '${body.image}', STATUS = '${body.status}'
             WHERE FOODID = ${id};`
     }
     if (!body.image) {
         delete body.image;
         query = `UPDATE TBLFOOD
             SET FOODNAME = '${body.name}', QUANTITY = ${body.quantity}, PRICE = ${body.price}
-            , CATID = ${body.category_id} WHERE FOODID = ${id};`;
-    } else {
-
+            , CATID = ${body.category_id}, STATUS = '${body.status}' WHERE FOODID = ${id};`;
     }
+
     console.log('body', body);
     pool.getConnection((err, connection) => {
         if (err) throw err; // not connected
@@ -108,9 +125,79 @@ exports.update = async (req, res) => {
     });
 }
 
+exports.addFoodForm = async (req, res) => {
+    if (!req.session || !req.session.user) {
+        res.redirect('/dang-nhap');
+    } else {
+        pool.getConnection((err, connection) => {
+            if (err) throw err; // not connected
+
+            connection.query(`SELECT CATID, CATNAME FROM TBLCATEGORIES`, (err, categories) => {
+                connection.release();
+                if (!err) {
+
+                    res.render('empty_product_form', { categories, status });
+                } else {
+                    console.log(err);
+                }
+            })
+        });
+    }
+}
+
+exports.addFood = async (req, res) => {
+    let query;
+    let { body, file } = req;
+
+    delete body.image;
+    if (file) {
+        let image = `/images/data/${file.filename}`;
+        body = {
+            ...body,
+            image: image
+        };
+        query = `INSERT INTO TBLFOOD (FOODNAME, QUANTITY, PRICE, CATID, STATUS, IMAGE)
+            VALUES ('${body.name}', ${body.quantity}, ${body.price}, ${body.category_id}, ${body.status}, '${body.image}');`;
+    }
+    if (!body.image) {
+        delete body.image;
+
+        query = `INSERT INTO TBLFOOD (FOODNAME, QUANTITY, PRICE, CATID, STATUS)
+            VALUES ('${body.name}', ${body.quantity}, ${body.price}, ${body.category_id}, ${body.status});`;
+    }
+
+    console.log('body', body);
+
+    pool.getConnection((err, connection) => {
+        if (err) throw err;
+
+        connection.query(query, (err, rows) => {
+            connection.release();
+            if (!err) {
+                res.redirect('/san-pham?size=5&page=1');
+            } else {
+                console.log(err);
+            }
+        })
+    })
+}
+
+
+
+let status = [{
+    "_id": 1,
+    "name": 'new'
+}, {
+    "_id": 2,
+    "name": "hot"
+}, {
+    "_id": 3,
+    "name": "removed"
+}]
+
+
 
 // module.exports = new ProductController();
-
 /*
 
 const getById = async (id) => {

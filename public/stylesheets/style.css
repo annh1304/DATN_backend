@@ -35626,10 +35626,10 @@ div.tagsinput span.tag a {
 }
 
 .changePageContainer {
-  align-self: flex-end;
+  align-self: center;
   margin-bottom: 20px;
   margin-top: -20px;
-  width: 20%;
+  width: auto;
   display: flex;
 }
 

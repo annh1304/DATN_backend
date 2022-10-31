@@ -4,16 +4,12 @@ const userService = require('./user_service');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 var mysql = require('mysql');
-
 //connect to mysql;
-const pool = mysql.createPool({
-    connectionLimit: 100,
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASS,
-    database: process.env.DB_NAME
-});
+const pool = require('../../web_connect');
 
+
+//post Login web;
+// gọi từ routerIndex;
 exports.login = async (req, res) => {
     const { username, password } = req.body;
     try {
@@ -26,8 +22,8 @@ exports.login = async (req, res) => {
 
                 if (!err) {
                     if (user.length > 0) {
-                        req.session.username = username;
-                        console.log('.....', req.session.username);
+                        req.session.user = user;
+                        console.log('.....', req.session.user);
                         res.redirect('/');
                     } else {
                         res.redirect('/dang-nhap');
@@ -43,14 +39,71 @@ exports.login = async (req, res) => {
     } catch (error) {
         throw new Error('error');
     }
-
-
-    //getFood;
-
-
 }
 
+exports.getAll = async (req, res) => {
+    if (!req.session || !req.session.user) {
+        res.redirect('/dang-nhap');
+    } else {
+        pool.getConnection((err, connection) => {
+            if (err) throw err; // not connected
+            const page = req.query.page;
+            const skip = (parseInt(page) - 1) * 5;
 
+            connection.query(`SELECT USERNAME, FULLNAME, EMAIL, FROM TBLUSER WHERE ROLE = 1 LIMIT 5 OFFSET ${skip}`, (err, rows) => {
+                connection.release();
+                if (!err) {
+                    rows = rows.map(row => {
+                        row = { ...row };
+                        if (row.STATUS.toString() == 'removed') {
+                            row.STATUS = true;
+                        } else {
+                            row.STATUS = false;
+                        }
+                        return row;
+                    });
+                    res.render('products_table', { rows });
+                } else {
+                    console.log(err);
+                }
+            })
+        });
+    }
+}
+
+exports.getById = async (req, res) => {
+    if (!req.session || !req.session.user) {
+        res.redirect('/dang-nhap');
+    } else {
+        const username = req.params.username;
+        pool.getConnection((err, connection) => {
+            if (err) throw err; // not connected
+
+            connection.query(`SELECT USERNAME, FULLNAME, EMAIL, ADDRESS, PHONENUMBER, DATEOFBIRTH, STATUS FROM TBLUSER WHERE USERNAME = ${username} `, (err, user) => {
+                connection.release();
+                if (!err) {
+                    user = user.map(u => {
+                        u = { ...u };
+                        if (u.STATUS.toString() == 'banned') {
+                            u.STATUS = true;
+                        } else {
+                            u.STATUS = false;
+                        }
+                        return u;
+                    });
+
+                    res.render('', { user });
+                } else {
+                    console.log(err);
+                }
+            })
+        });
+    }
+}
+
+exports.banUser = async (req, res) => {
+
+}
 
 
 
@@ -64,7 +117,7 @@ exports.login = async (req, res) => {
 // //local
 // exports.login = async (username, password) =>{
 //     try {
-//         return await userService.login(username, password);   
+//         return await userService.login(username, password);
 //     } catch (error) {
 //         throw new Error('error');
 //     }
@@ -73,7 +126,7 @@ exports.login = async (req, res) => {
 
 // //api
 // exports.signup = async (username, password) =>{
-//     const check = await userService.checkUsername(username);    
+//     const check = await userService.checkUsername(username);
 //     try {
 //         if(check){
 //             throw new Error('Tên tài khoản đã tồn tại!');

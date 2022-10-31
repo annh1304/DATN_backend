@@ -7,8 +7,8 @@ const middleware = require('../middleware/upload');
 
 
 router.get('/', productController.getAll);
-// router.get('/them-san-pham', productController);
-// router.post('/them-san-pham', productController);
+router.get('/them-san-pham', productController.addFoodForm);
+router.post('/them-san-pham', [middleware.single('image')], productController.addFood);
 router.get('/detail/:id', productController.getById);
 router.post('/detail/:id', [middleware.single('image')], productController.update);
 // router.post('/remove/:id', productController);

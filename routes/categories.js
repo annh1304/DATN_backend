@@ -6,16 +6,8 @@ const categoryController = require('../components/categories/category_controller
 const middleware = require('../middleware/upload');
 
 /* GET products listing.
-http://localhost:1304/san-pham */
-router.get('/', async function (req, res, next) {
-    if (!req.session || !req.session.user) {
-        res.redirect('/dang-nhap');
-    } else {
-        const { page, size } = req.query;
-        const products = await productController.getAll(page, size);
-        res.render('categories_table', { products });
-    }
-});
+http://localhost:1304/danh-muc */
+router.get('/', categoryController.getAll);
 //Add product http://localhost:1304/san-pham/them-san-pham*/
 router.get('/them-danh-muc', async function (req, res, next) {
     if (!req.session || !req.session.user) {

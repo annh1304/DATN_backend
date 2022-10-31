@@ -378,8 +378,7 @@
                     <select class="form-control" id="categories" name="category_id">
                       {{#each categories}}
                       {{#if this.isSelected}}
-                      <option selected value="{{this.CATID}}">{{this.CATNAME}}
-                      </option>
+                      <option selected value="{{this.CATID}}">{{this.CATNAME}}</option>
                       {{else}}
                       <option value="{{this.CATID}}">{{this.CATNAME}}</option>
                       {{/if}}
@@ -388,10 +387,14 @@
                   </div>
                   <div class="form-group">
                     <label for="exampleSelectGender">Status</label>
-                    <select class="form-control" id="exampleSelectGender">
-                      <option>Món mới</option>
-                      <option>Nổi bật</option>
-                      <option>Ngừng kinh doanh</option>
+                    <select class="form-control" name="status">
+                      {{#each status}}
+                      {{#if this.isSelected}}
+                      <option selected value="{{this.name}}">{{this.name}}</option>
+                      {{else}}
+                      <option value="{{this.name}}">{{this.name}}</option>
+                      {{/if}}
+                      {{/each}}
                     </select>
                   </div>
                   <div class="form-group">
@@ -462,6 +465,7 @@
     }
     reader.readAsDataURL(file);
   }
+
 
 
 </script>

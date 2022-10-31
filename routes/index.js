@@ -4,7 +4,7 @@ const userController = require('../components/users/user_controller');
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
-  if (!req.session || !req.session.username) {
+  if (!req.session || !req.session.user) {
     res.redirect('/dang-nhap');
   } else {
     res.render('index');
@@ -13,11 +13,12 @@ router.get('/', function (req, res, next) {
 
 // trang đăng nhập
 router.get('/dang-nhap', function (req, res, next) {
-  if (req.session.username && req.session) {
+  if (req.session.user && req.session) {
     res.redirect('/');
   }
   res.render('login', { title: 'login' });
 });
+
 router.get('/dang-xuat', function (req, res, next) {
   req.session.destroy(function (err) {
     res.redirect('/dang-nhap');

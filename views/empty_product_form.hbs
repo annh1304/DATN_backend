@@ -353,132 +353,78 @@
 
                   <form class="" action="/san-pham/them-san-pham" method="post" enctype="multipart/form-data" name=""
                     id="" accept-charset="utf-8" autocomplete="on">
-                    {{!-- <input type="hidden" name="formID" value="222071778479467" />
-                    <input type="hidden" id="JWTContainer" value="" />
-                    <input type="hidden" id="cardinalOrderNumber" value="" /> --}}
-                    <div role="main" class="">
-                      <ul>
-                        <li id="">
-                          <div>
-                            <div class="header-text httal htvam">
-                              <h1 id="header_1" class="form-header" data-component="header">
-                                Add new Product
-                              </h1>
-                            </div>
-                          </div>
-                        </li>
-                        {{!-- <li class="form-line" data-type="control_textbox" id="id_4">
-                          <label class="form-label form-label-top form-label-auto" id="label_4" for="input_4"> Product
-                            ID </label>
-                          <div id="cid_4" class="form-input-wide">
-                            <input type="text" id="input_4" name="q4_productName" data-type="input-textbox"
-                              class="form-textbox" data-defaultvalue="" size="24" value="" placeholder=""
-                              data-component="textbox" aria-labelledby="label_4" />
-                          </div>
-                        </li> --}}
-                        <li class="form-line" data-type="control_textbox" id="id_4">
-                          <label class="form-label form-label-top form-label-auto" id="label_4" for="input_4"> Product
-                            Name </label>
-                          <div id="cid_4" class="form-input-wide">
-                            <input type="text" id="name" name="name" data-type="input-textbox" class="form-textbox"
-                              data-defaultvalue="" size="24" value="" placeholder="Product name"
-                              data-component="textbox" aria-labelledby="label_4" />
-                          </div>
-                        </li>
-                        <li class="form-line" data-type="control_dropdown" id="id_3">
-                          <label class="form-label form-label-top form-label-auto" id="label_3" for="input_3"> Product
-                            Category </label>
-                          <div id="cid_3" class="form-input-wide">
-                            <select class="form-dropdown" id="category" name="category_id" style="width:150px"
-                              data-component="dropdown">
-                              {{#each categories}}
-                              {{!-- k viết đc #ifEqual trong hbs ==> tạo helper --}}
-                              {{!-- {{#if ifEqual this._id ../product.category_id}}
-                              <option selected value="{{this._id}}">{{this.name}}</option>
-                              {{#else}}
-                              <option value="{{this._id}}">{{this.name}}</option>
-                              {{/if}} --}}
-                              {{!-- {{#if this.isSelected}} --}}
-                              {{!-- <option selected value="{{this._id}}">{{this.name}}</option> --}}
-                              {{!-- {{else}} --}}
-                              <option value="{{this._id}}">{{this.name}}</option>
-                              {{!-- {{/if}} --}}
-                              {{/each}}
-                            </select>
-                          </div>
-                        </li>
-                        <li class="form-line" data-type="control_textbox" id="id_4">
-                          <label class="form-label form-label-top form-label-auto" id="label_4" for="input_4"> Quantity
-                          </label>
-                          <div id="cid_4" class="form-input-wide">
-                            <input type="text" id="quantity" name="quantity" data-type="input-textbox"
-                              class="form-textbox" data-defaultvalue="" size="24" value="" placeholder=""
-                              data-component="textbox" aria-labelledby="label_4" />
-                          </div>
-                        </li>
-                        <li class="form-line" data-type="control_radio" id="id_5">
-                          <label class="form-label form-label-top form-label-auto" id="label_5" for="input_5"> Product
-                            Freshness </label>
-                          <div id="cid_5" class="form-input-wide">
-                            <div class="form-multiple-column" data-columncount="3" role="group"
-                              aria-labelledby="label_5" data-component="radio">
-                              <span class="form-radio-item">
-                                <span class="dragger-item">
-                                </span>
-                                <input type="radio" aria-describedby="label_5" class="form-radio" id="input_5_0"
-                                  name="q5_productFreshness" value="Brand New" />
-                                <label id="label_input_5_0" for="input_5_0"> Món mới </label>
-                              </span>
-                              <span class="form-radio-item">
-                                <span class="dragger-item">
-                                </span>
-                                <input type="radio" aria-describedby="label_5" class="form-radio" id="input_5_1"
-                                  name="q5_productFreshness" value="Second Hand" />
-                                <label id="label_input_5_1" for="input_5_1"> Nổi bật </label>
-                              </span>
-                            </div>
-                          </div>
-                        </li>
-                        <li class="form-line" data-type="control_fileupload" id="id_7">
-                          <label class="form-label form-label-top form-label-auto" id="label_7" for=""> Image of Product
-                          </label>
-
-                          <div class="form-group">
-                            <img id="image-view" alt="product image">
-                          </div>
-                          <div id="cid_7" class="form-input-wide">
-                            <input type="file" id="image-file" name="image" class="form-upload"
-                              onchange="onChangeFile()" data-component="fileupload" />
-                            {{!-- <input type="hidden" id="image" name="image" class="form-upload"> --}}
-                          </div>
-                        </li>
-                        <li class="form-line" data-type="control_number" id="id_8">
-                          <label class="form-label form-label-top form-label-auto" id="label_8" for="input_8"> Product
-                            Price </label>
-                          <div id="cid_8" class="form-input-wide">
-                            <input type="number" id="price" name="price" data-type="input-number"
-                              class=" form-number-input form-textbox validate[Numeric]" data-defaultvalue=""
-                              style="width:60px" size="5" value="" placeholder="ex: $5" data-component="number"
-                              aria-labelledby="label_8" step="any" />
-                          </div>
-                        </li>
-                        <li class="form-line" data-type="" id="">
-                          <div id="cid_2" class="">
-                            <div style="margin-left:156px" class="">
-                              <button>
-                                {{!-- id="input_2" type="submit" class="form-submit-button submit-button jf-form-buttons
-                                jsTest-submitField" data-component="button" data-content=""> --}}
-                                Submit
-                              </button>
-                            </div>
-                          </div>
-                        </li>
-                        <li style="display:none">
-                          Should be Empty:
-                          <input type="text" name="website" value="" />
-                        </li>
-                      </ul>
+                    <div class="form-group">
+                      <label for="exampleInputEmail3">Product Name</label>
+                      <input type="text" id="name" name="name" data-type="input-textbox" class="form-control"
+                        placeholder="Enter Product Name" value="">
                     </div>
+                    <div class="form-group">
+                      <label for="exampleInputPassword4">Quantity</label>
+                      <input type="number" id="quantity" name="quantity" data-type="input-textbox" class="form-control"
+                        placeholder="Enter Quantity" value="">
+                    </div>
+                    <div class="form-group">
+                      <label for="exampleInputPassword4">Price</label>
+                      <input type="number" id="price" name="price" data-type="input-textbox" class="form-control"
+                        placeholder="Enter Price" value="">
+                    </div>
+                    <div class="form-group">
+                      <label for="exampleSelectGender">categories</label>
+                      <select class="form-control" id="categories" name="category_id">
+                        {{#each categories}}
+                        {{#if this.isSelected}}
+                        <option selected value="{{this.CATID}}">{{this.CATNAME}}
+                        </option>
+                        {{else}}
+                        <option value="{{this.CATID}}">{{this.CATNAME}}</option>
+                        {{/if}}
+                        {{/each}}
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label for="exampleSelectGender">Status</label>
+                      <select class="form-control" id="exampleSelectGender" name="status">
+                        {{#each status}}
+                        {{#if this.isSelected}}
+                        <option selected value="{{this.name}}">{{this.name}}
+                        </option>
+                        {{else}}
+                        <option value="{{this.name}}">{{this.name}}</option>
+                        {{/if}}
+                        {{/each}}
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label>File upload</label>
+                      <div id="cid_7" class="form-input-wide">
+                        <img src="" id="image-view" alt="product image">
+                      </div>
+                      <div class="input-group col-xs-12">
+                        <input type="file" id="image-file" name="image" class=" file-upload-browse btn btn-primary"
+                          data-imagevalidate="yes" placeholder="Upload Image" onchange="onChangeFile()"
+                          data-file-accept="pdf, doc, docx, xls, csv, txt, rtf, html, zip, mp3, wma, mpg, flv, avi, jpg, jpeg, png, gif"
+                          data-file-maxsize="10240" data-component="fileupload">
+                        {{!-- <span class="input-group-append">
+                          <button class="file-upload-browse btn btn-primary" type="button">Upload</button>
+                        </span> --}}
+                      </div>
+                    </div>
+
+                    {{!-- ui upload hình cũ --}}
+                    {{!-- <div class="form-group">
+                      <label>File upload</label>
+                      <input type="file" name="img[]" class="file-upload-default">
+                      <div class="input-group col-xs-12">
+                        <input type="text" class="form-control file-upload-info" disabled placeholder="Upload Image">
+                        <span class="input-group-append">
+                          <button class="file-upload-browse btn btn-primary" type="button">Upload</button>
+                        </span>
+                      </div>
+                    </div> --}}
+
+
+                    <button type="submit" class="btn btn-primary me-2">Submit</button>
+                    <button class="btn btn-light">Cancel</button>
                   </form>
                 </div>
               </div>

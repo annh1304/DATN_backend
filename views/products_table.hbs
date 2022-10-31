@@ -352,27 +352,33 @@
                         <th>
                           Image
                         </th>
-                        <th>
-                          See more
-                        </th>
                       </tr>
                     </thead>
                     <tbody>
                       {{#each rows}}
                       <tr class="table-info">
-                        <td>{{this.FOODNAME}}</td>
+                        {{!-- <td>{{this.FOODNAME}}</td> --}}
+                        <td>
+                          {{#if this.STATUS}}
+                          <a href="/san-pham/detail/{{this.FOODID}}"
+                            style="text-decoration: line-through; color: #d37604; font-size: medium; font-weight: bold;">{{this.FOODNAME}}</a>
+                          {{else}}
+                          <a href="/san-pham/detail/{{this.FOODID}}"
+                            style="text-decoration: none; color: #d37604; font-size: medium; font-weight: bold;">{{this.FOODNAME}}</a>
+                          {{/if}}
+                        </td>
                         <td>{{this.PRICE}}</td>
-                        {{!-- <td>{{this.quantity}}</td> --}}
+                        {{!-- <td>{{this.QUANTITY}}</td> --}}
                         <td>{{this.CATNAME}}</td>
                         <td>
                           <img src="{{this.IMAGE}}">
                         </td>
-                        <td>
+                        {{!-- <td>
                           <button><a href="/san-pham/detail/{{this.FOODID}}">Details</a></button>
-                        </td>
-                        <td>
+                        </td> --}}
+                        {{!-- <td>
                           <a href="#" class="btn btn-link" onclick="onRemove('{{this.FOODID}}')">Delete</a>
-                        </td>
+                        </td> --}}
                       </tr>
                       {{/each}}
                     </tbody>
