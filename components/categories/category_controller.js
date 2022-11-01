@@ -10,7 +10,7 @@ exports.getAll = async (req, res) => {
         pool.getConnection((err, connection) => {
             if (err) throw err; // not connected
 
-            connection.query(`SELECT CATID, CATNAME, IMAGE FROM TBLCATEGORIES`, (err, rows) => {
+            connection.query(`SELECT CATID, CATNAME, IMAGE FROM tblcategories`, (err, rows) => {
                 connection.release();
                 if (!err) {
                     res.render('categories_table', { rows });

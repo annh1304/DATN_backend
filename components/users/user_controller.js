@@ -16,7 +16,7 @@ exports.login = async (req, res) => {
         pool.getConnection((err, connection) => {
             if (err) throw err; // not connected
 
-            connection.query(`SELECT USERNAME, PASSWORD FROM TBLUSER WHERE USERNAME = '${username}' AND PASSWORD = '${password}' AND ROLE = 0`, (err, user) => {
+            connection.query(`SELECT USERNAME, PASSWORD FROM tbluser WHERE USERNAME = '${username}' AND PASSWORD = '${password}' AND ROLE = 0`, (err, user) => {
                 connection.release();
                 console.log('user', user);
 
@@ -50,19 +50,19 @@ exports.getAll = async (req, res) => {
             const page = req.query.page;
             const skip = (parseInt(page) - 1) * 5;
 
-            connection.query(`SELECT USERNAME, FULLNAME, EMAIL, FROM TBLUSER WHERE ROLE = 1 LIMIT 5 OFFSET ${skip}`, (err, rows) => {
+            connection.query(`SELECT USERNAME, EMAIL, STATUS, IMAGE FROM tbluser WHERE ROLE = 1 LIMIT 5 OFFSET ${skip}`, (err, rows) => {
                 connection.release();
                 if (!err) {
                     rows = rows.map(row => {
                         row = { ...row };
-                        if (row.STATUS.toString() == 'removed') {
+                        if (row.STATUS.toString() == 'banned') {
                             row.STATUS = true;
                         } else {
                             row.STATUS = false;
                         }
                         return row;
                     });
-                    res.render('products_table', { rows });
+                    res.render('user_table', { rows });
                 } else {
                     console.log(err);
                 }
@@ -79,7 +79,7 @@ exports.getById = async (req, res) => {
         pool.getConnection((err, connection) => {
             if (err) throw err; // not connected
 
-            connection.query(`SELECT USERNAME, FULLNAME, EMAIL, ADDRESS, PHONENUMBER, DATEOFBIRTH, STATUS FROM TBLUSER WHERE USERNAME = ${username} `, (err, user) => {
+            connection.query(`SELECT USERNAME, FULLNAME, EMAIL, ADDRESS, PHONENUMBER, DATEOFBIRTH, STATUS FROM tbluser WHERE USERNAME = '${username}' `, (err, user) => {
                 connection.release();
                 if (!err) {
                     user = user.map(u => {
@@ -92,7 +92,8 @@ exports.getById = async (req, res) => {
                         return u;
                     });
 
-                    res.render('', { user });
+                    // res.render('', { user });
+                    console.log('user-detail', user);
                 } else {
                     console.log(err);
                 }

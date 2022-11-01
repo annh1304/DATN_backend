@@ -15,7 +15,7 @@ exports.getAll = async (req, res) => {
             if (err) throw err; // not connected
 
             // connection.query(`SELECT TBLFOOD.FOODID, TBLFOOD.FOODNAME, TBLFOOD.PRICE, TBLFOOD.IMAGE, TBLFOOD.STATUS, TBLCATEGORIES.CATNAME FROM TBLFOOD INNER JOIN TBLCATEGORIES ON TBLFOOD.CATID = TBLCATEGORIES.CATID WHERE TBLFOOD.FOODID BETWEEN ${parseInt(from) + 1} AND ${tO}`, (err, rows) => {
-            connection.query(`SELECT TBLFOOD.FOODID, TBLFOOD.FOODNAME, TBLFOOD.PRICE, TBLFOOD.IMAGE, TBLFOOD.STATUS, TBLCATEGORIES.CATNAME FROM TBLFOOD INNER JOIN TBLCATEGORIES ON TBLFOOD.CATID = TBLCATEGORIES.CATID LIMIT 5 OFFSET ${skip}`, (err, rows) => {
+            connection.query(`SELECT tblfood.FOODID, tblfood.FOODNAME, tblfood.PRICE, tblfood.IMAGE, tblfood.STATUS, tblcategories.CATNAME FROM tblfood INNER JOIN tblcategories ON tblfood.CATID = tblcategories.CATID LIMIT 5 OFFSET ${skip}`, (err, rows) => {
                 connection.release();
                 if (!err) {
                     rows = rows.map(row => {
@@ -45,11 +45,11 @@ exports.getById = async (req, res) => {
         //getFood;
         pool.getConnection((err, connection) => {
             if (err) throw err; // not connected
-            connection.query(`SELECT * FROM TBLFOOD WHERE FOODID = ${id}`, function (err, food) {
+            connection.query(`SELECT * FROM tblfood WHERE FOODID = ${id}`, function (err, food) {
                 if (err) {
                     return console.log('error: ' + err.message);
                 }
-                connection.query(`SELECT CATID, CATNAME FROM TBLCATEGORIES`, function (err, categories) {
+                connection.query(`SELECT CATID, CATNAME FROM tblcategories`, function (err, categories) {
                     if (err) {
                         return console.log('error: ' + err.message);
                     }
@@ -98,14 +98,14 @@ exports.update = async (req, res) => {
             ...body,
             image: image
         };
-        query = `UPDATE TBLFOOD
+        query = `UPDATE tblfood
             SET FOODNAME = '${body.name}', QUANTITY = ${body.quantity}, PRICE = ${body.price}
             , CATID = ${body.category_id}, IMAGE = '${body.image}', STATUS = '${body.status}'
             WHERE FOODID = ${id};`
     }
     if (!body.image) {
         delete body.image;
-        query = `UPDATE TBLFOOD
+        query = `UPDATE tblfood
             SET FOODNAME = '${body.name}', QUANTITY = ${body.quantity}, PRICE = ${body.price}
             , CATID = ${body.category_id}, STATUS = '${body.status}' WHERE FOODID = ${id};`;
     }
@@ -132,7 +132,7 @@ exports.addFoodForm = async (req, res) => {
         pool.getConnection((err, connection) => {
             if (err) throw err; // not connected
 
-            connection.query(`SELECT CATID, CATNAME FROM TBLCATEGORIES`, (err, categories) => {
+            connection.query(`SELECT CATID, CATNAME FROM tblcategories`, (err, categories) => {
                 connection.release();
                 if (!err) {
 
@@ -156,13 +156,13 @@ exports.addFood = async (req, res) => {
             ...body,
             image: image
         };
-        query = `INSERT INTO TBLFOOD (FOODNAME, QUANTITY, PRICE, CATID, STATUS, IMAGE)
+        query = `INSERT INTO tblfood (FOODNAME, QUANTITY, PRICE, CATID, STATUS, IMAGE)
             VALUES ('${body.name}', ${body.quantity}, ${body.price}, ${body.category_id}, ${body.status}, '${body.image}');`;
     }
     if (!body.image) {
         delete body.image;
 
-        query = `INSERT INTO TBLFOOD (FOODNAME, QUANTITY, PRICE, CATID, STATUS)
+        query = `INSERT INTO tblfood (FOODNAME, QUANTITY, PRICE, CATID, STATUS)
             VALUES ('${body.name}', ${body.quantity}, ${body.price}, ${body.category_id}, ${body.status});`;
     }
 
