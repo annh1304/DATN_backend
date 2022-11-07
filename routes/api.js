@@ -4,17 +4,28 @@ const router = express.Router();
 const jwt = require('jsonwebtoken');
 const authen = require('../middleware/authen');
 
-const userCtrl = require('../components/app_controller/tblCartController');
+const cartCtrl = require('../components/app_controller/tblCartController');
 const foodCtrl = require('../components/app_controller/tblFoodController');
-const userController = require('../components/users/user_controller');
+const userCtrl = require('../components/app_controller/tblUserController');
+const orderCtrl = require('../components/app_controller/tblOrderController')
 //đăng ký
 
 
-router.get("/tblcart", userCtrl.getuser);
-router.post("/postcard", userCtrl.postuser);
+//cart
+router.get("/tblcart", cartCtrl.getcart);
+router.post("/postcard", cartCtrl.postcart);
 
 //food 
 router.get("/getfood", foodCtrl.getfood);
+
+//user
+router.get("/getuser", userCtrl.getuser);
+router.post("/postuser", userCtrl.postuser);
+router.post("/update-infor", userCtrl.updateInfor);
+router.post("/update-password", userCtrl.updatePassword);
+
+//order
+router.post("/updateOrderStatus", orderCtrl.updateorder);
 
 module.exports = router;
 

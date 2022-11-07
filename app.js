@@ -23,8 +23,9 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var productRouter = require('./routes/product');
 var chartsRouter = require('./routes/charts');
-var apiRouter = require('./routes/api');
 var categoriesRouter = require('./routes/categories');
+var orderRouter = require('./routes/order');
+var apiRouter = require('./routes/api');
 //const { connection } = require('mongoose');
 
 var app = express();
@@ -61,6 +62,7 @@ app.use('/san-pham', productRouter);
 app.use('/thong-ke', chartsRouter);
 app.use('/api', apiRouter);
 app.use('/danh-muc', categoriesRouter);
+app.use('/don-hang', orderRouter);
 // app.use('/product', productRouter);
 
 // catch 404 and forward to error handler
