@@ -13,7 +13,7 @@ exports.getAll = async (req, res) => {
             if (err) throw err; // not connected
 
             // connection.query(`SELECT TBLFOOD.FOODID, TBLFOOD.FOODNAME, TBLFOOD.PRICE, TBLFOOD.IMAGE, TBLFOOD.STATUS, TBLCATEGORIES.CATNAME FROM TBLFOOD INNER JOIN TBLCATEGORIES ON TBLFOOD.CATID = TBLCATEGORIES.CATID WHERE TBLFOOD.FOODID BETWEEN ${parseInt(from) + 1} AND ${tO}`, (err, rows) => {
-            connection.query(`SELECT ORDERID, USERNAME, ADDRESS, ORDERTIME, ORDSTATUS FROM tblorder WHERE ORDSTATUS IN (2,3)`, (err, sentOrders) => {
+            connection.query(`SELECT ORDERID, USERNAME, ADDRESS, ORDERTIME, CONFIRMTIME, ORDSTATUS FROM tblorder WHERE ORDSTATUS IN (2,3)`, (err, sentOrders) => {
                 if (!err) {
                     sentOrders = sentOrders.map(order => {
                         order = { ...order };
@@ -64,7 +64,7 @@ exports.getById = async (req, res) => {
 exports.confirmOrder = async (req, res) => {
     const { ordid, username } = req.params;
 
-    let query = `UPDATE tblorder SET ORDSTATUS = 3 WHERE USERNAME = '${username}' AND ORDERID = '${ordid}'`;
+    let query = `UPDATE tblorder SET ORDSTATUS = 3, CONFIRMTIME = CURRENT_TIMESTAMP WHERE USERNAME = '${username}' AND ORDERID = '${ordid}'`;
 
     pool.getConnection((err, connection) => {
         if (err) throw err; // not connected
