@@ -3,13 +3,13 @@ var router = express.Router();
 const userController = require('../components/users/user_controller');
 const indexController = require('../components/index/indexcontroller');
 /* GET home page. */
-router.get('/', function (req, res, next) {
-  if (!req.session || !req.session.user) {
-    res.redirect('/dang-nhap');
-  } else {
-    res.render('index');
-  }
-});
+// router.get('/', function (req, res, next) {
+//   if (!req.session || !req.session.user) {
+//     res.redirect('/dang-nhap');
+//   } else {
+//     res.render('index');
+//   }
+// });
 
 // trang đăng nhập
 router.get('/dang-nhap', function (req, res, next) {
