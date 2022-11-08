@@ -11,6 +11,10 @@ const indexController = require('../components/index/indexcontroller');
 //   }
 // });
 
+router.post('/dang-nhap', userController.login);
+router.get('/', indexController.getAll);
+
+
 // trang đăng nhập
 router.get('/dang-nhap', function (req, res, next) {
   if (req.session.user && req.session) {
@@ -25,8 +29,7 @@ router.get('/dang-xuat', function (req, res, next) {
   });
 });
 
-router.post('/dang-nhap', userController.login);
-router.get('/', indexController.getAll);
+
 
 
 module.exports = router;
