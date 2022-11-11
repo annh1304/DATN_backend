@@ -373,14 +373,25 @@
                         <div>
                           {{#each money}}
                           <p class="statistics-title">Doanh thu tháng</p>
+
                           <h3 style="color: rgb(255, 162, 0);">{{this.MONTHTOTAL}}đ</h3>
                           {{/each }}
+
+                          <h3>32.53%</h3>
                         </div>
+                        <div>
+                          <p class="statistics-title">Món nước bán chạy</p>
+                          <h3>Cold Brew</h3>
+                      </div>
                         <div>
                           {{#each food}}
                           <p class="statistics-title">Món ăn nổi bật</p>
+
                           <h3 style="color: rgb(255, 162, 0);">{{this.FOODNAME}}</h3>
                           {{/each}}
+
+                          <h3>{{bestSeller.FOODNAME}}</h3>
+
                         </div>
 
                         <div>
@@ -388,6 +399,8 @@
                           <p class="statistics-title">Số đơn đã được bán</p>
                           <h3 style="color: rgb(76, 84, 243);">{{this.COUNTOTAL}}</h3>
                           {{/each}}
+                          <p class="statistics-title">Tổng số khách hàng</p>
+                          <h3>55</h3>
                         </div>
                       </div>
                     </div>
@@ -439,6 +452,19 @@
         <!-- partial -->
       </div>
       <!-- main-panel ends -->
+
+      <!-- content-wrapper ends -->
+      <!-- partial:partials/_footer.html -->
+      <footer class="footer">
+        <div class="d-sm-flex justify-content-center justify-content-sm-between">
+          <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">Premium <a
+              href="https://www.bootstrapdash.com/" target="_blank">Bootstrap admin template</a> from
+            BootstrapDash.</span>
+          <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">Copyright © 2021. All rights
+            reserved.</span>
+        </div>
+      </footer>
+      <!-- partial -->
     </div>
     <!-- page-body-wrapper ends -->
   </div>
