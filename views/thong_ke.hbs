@@ -346,21 +346,21 @@
     <!-- partial -->
     <div class="main-panel">
       <div class="content-wrapper">
-        <div class="row">
+        <div class="row" style="max-width: 950px;">
 
           <div class="col-lg-6 grid-margin stretch-card">
             <div class="card">
               <div class="card-body">
                 <h4 class="card-title">Bar chart</h4>
-                <canvas id="barChart"></canvas>
+                <canvas id="barChart" width="400" height="400"></canvas>
               </div>
             </div>
           </div>
           <div class="col-lg-6 grid-margin grid-margin-lg-0 stretch-card">
             <div class="card">
               <div class="card-body">
-                <h4 class="card-title">Pie chart</h4>
-                <canvas id="pieChart"></canvas>
+                <h4 class="card-title">Top 3 sellers</h4>
+                <canvas id="pieChart" width="400" height="400"></canvas>
               </div>
             </div>
           </div>
@@ -384,3 +384,51 @@
   </div>
   <!-- page-body-wrapper ends -->
 </div>
+
+<script>
+  const ctx = document.getElementById('pieChart').getContext('2d');
+  console.log("abababa");
+
+  const data = {
+    labels: [
+      'Red',
+      'Blue',
+      'Yellow',
+      'Green'
+    ],
+    datasets: [{
+      label: 'My First Dataset',
+      data: [300, 500, 100, 5],
+      backgroundColor: [
+        'rgb(255, 99, 132)',
+        'rgb(54, 162, 235)',
+        'rgb(255, 205, 86)',
+        'rgb(4, 240, 0)'
+      ],
+      hoverOffset: 4
+    }]
+  };
+
+  const config = {
+    type: 'pie',
+    data: data,
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: 'top',
+        },
+        title: {
+          display: true,
+          text: '% doanh thu'
+        }
+      }
+    },
+  };
+
+
+
+  const myChart = new Chart(ctx, config);
+</script>
+{{!--
+<script src="/javascripts/chart.js/chartchart.js" /> --}}

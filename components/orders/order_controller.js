@@ -13,17 +13,22 @@ exports.getAll = async (req, res) => {
             if (err) throw err; // not connected
 
             // connection.query(`SELECT TBLFOOD.FOODID, TBLFOOD.FOODNAME, TBLFOOD.PRICE, TBLFOOD.IMAGE, TBLFOOD.STATUS, TBLCATEGORIES.CATNAME FROM TBLFOOD INNER JOIN TBLCATEGORIES ON TBLFOOD.CATID = TBLCATEGORIES.CATID WHERE TBLFOOD.FOODID BETWEEN ${parseInt(from) + 1} AND ${tO}`, (err, rows) => {
-            connection.query(`SELECT ORDERID, USERNAME, ADDRESS, ORDERTIME, CONFIRMTIME, ORDSTATUS FROM tblorder WHERE ORDSTATUS IN (2,3)`, (err, sentOrders) => {
+            connection.query(`SELECT ORDERID, USERNAME, ADDRESS, ORDERTIME, CONFIRMTIME, ORDSTATUS FROM tblorder WHERE ORDSTATUS IN (2,3,0)`, (err, sentOrders) => {
                 if (!err) {
+
                     sentOrders = sentOrders.map(order => {
                         order = { ...order };
                         if (order.ORDSTATUS === 3) {
-                            order.ORDSTATUS = true;
+                            order.ISCONFIRMED = true;
                         } else if (order.ORDSTATUS === 2) {
-                            order.ORDSTATUS = false;
+                            order.ISSENT = true;
+                        } else if (order.ORDSTATUS === 0) {
+                            order.ISCANCELED = true;
                         }
+                        delete order.ORDSTATUS;
                         return order;
                     });
+                    console.log('abc', sentOrders);
                     res.render('orders_table', { sentOrders });
                 } else {
                     console.log(err);
@@ -39,9 +44,9 @@ exports.getById = async (req, res) => {
         res.redirect('/dang-nhap');
     } else {
         const { id, username } = req.params;
-        const query = `SELECT tblfood.FOODID , tblfood.FOODNAME, tblfood.PRICE , tblfood.IMAGE, tblorderdetail.QUANTITY , tblorderdetail.TOTAL 
+        const query = `SELECT tblfood.FOODID , tblfood.FOODNAME, tblfood.PRICE , tblfood.IMAGE, tblorderdetail.QUANTITY , tblorderdetail.TOTAL, tblorder.ORDSTATUS
         FROM (tblorderdetail INNER JOIN tblfood ON tblorderdetail.FOODID = tblfood.FOODID)
-        INNER JOIN tblorder ON tblorderdetail.ORDERID = tblorder.ORDERID  WHERE tblorder.USERNAME = '${username}'  AND tblorder.ORDERID = ${id} AND tblorder.ORDSTATUS = 2`;
+        INNER JOIN tblorder ON tblorderdetail.ORDERID = tblorder.ORDERID  WHERE tblorder.USERNAME = '${username}'  AND tblorder.ORDERID = ${id} AND tblorder.ORDSTATUS != 1`;
         //getFood;
         pool.getConnection((err, connection) => {
             if (err) throw err; // not connected
@@ -49,13 +54,18 @@ exports.getById = async (req, res) => {
                 if (err) {
                     return console.log('error: ' + err.message);
                 }
-                console.log("length", ordDetail.length);
+                // console.log("length", ordDetail.length);
+                //tính giá tổng đơn hàng
                 let total = 0;
                 for (let i = 0; i < ordDetail.length; i++) {
                     total += Number(ordDetail[i].TOTAL);
                 }
+                let isPending = true;
+                if (ordDetail[0].ORDSTATUS != 2) {
+                    isPending = false;
+                }
                 // res.json(ordDetail);
-                res.render('orders_detail', { ordDetail, username, total, id });
+                res.render('orders_detail', { ordDetail, username, total, id, isPending });
             });
         });
     }

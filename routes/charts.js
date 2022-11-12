@@ -1,12 +1,7 @@
 var express = require('express');
+const chartController = require('../components/chart/chart_controller');
 var router = express.Router();
 
-router.get('/', function (req, res, next) {
-  if (!req.session || !req.session.user) {
-    res.redirect('/dang-nhap');
-  } else {
-    res.render('thong_ke');
-  }
-});
+router.get('/', chartController.getAll);
 
 module.exports = router;

@@ -20,7 +20,7 @@ const tblUserController = {
     //         res.send({ message: 'Insert success!' })
     //     })
     // },
-
+    //dang-nhap
     getuser: (req, res) => {
         let sql = 'SELECT * FROM tbluser'
         pool.getConnection((err, connection) => {
@@ -31,7 +31,7 @@ const tblUserController = {
             })
         })
     },
-
+    //dang-ky
     postuser: (req, res) => {
         let data = req.body;
         let sql = 'INSERT INTO tbluser SET ?'
@@ -43,7 +43,30 @@ const tblUserController = {
             })
         })
     },
+    //lay thong tin user
+    getUserInfor: (req, res) => {
+        const username = req.query.username;
+        let query = `SELECT * FROM tbluser WHERE USERNAME = '${username}'`;
+        pool.getConnection((err, connection) => {
+            if (err) throw err; // not connected
 
+            connection.query(query, (err, user) => {
+                connection.release();
+                // console.log('user', user);
+                if (!err) {
+                    console.log(user);
+                    res.send(user[0]);
+                    // res.json(user);
+                    console.log(err);
+                } else {
+                    // res.redirect('/dang-nhap');
+
+                }
+
+            });
+        });
+    },
+    //cap nhat thong tin
     updateInfor: async (req, res) => {
         const body = req.body;
         // const username = req.params.username;
@@ -72,6 +95,7 @@ const tblUserController = {
 
         // res.send(body);
     },
+    // cap nhat mat khau
     updatePassword: async (req, res) => {
         const body = req.body;
         // const username = req.params.username;

@@ -443,12 +443,15 @@
                                         {{/each}}
                                     </tbody>
                                 </table>
+                                {{#if isPending}}
                                 <div class="btnContainer" style="margin-top: 20px;" type="submit">
                                     <button onclick="changStatus(true, '{{id}}', '{{username}}')"
                                         class="btn btn-primary me-2">Confirm</button>
                                     <button onclick="changStatus(false, '{{id}}', '{{username}}')"
                                         class="btn btn-light">Cancel</button>
                                 </div>
+                                {{else}}
+                                {{/if}}
                             </div>
                         </div>
                     </div>

@@ -23,6 +23,8 @@ router.get("/getuser", userCtrl.getuser);
 router.post("/postuser", userCtrl.postuser);
 router.post("/update-infor", userCtrl.updateInfor);
 router.post("/update-password", userCtrl.updatePassword);
+router.get("/getuser-infor", userCtrl.getUserInfor);
+
 
 //order
 router.post("/updateOrderStatus", orderCtrl.updateorder);

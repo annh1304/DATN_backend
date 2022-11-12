@@ -32,12 +32,6 @@ router.get('/dang-xuat', function (req, res, next) {
 });
 
 
-router.post('/dang-nhap', userController.login);
-router.get('/', indexController.getAll);
-
-
-
-
 
 module.exports = router;
 
