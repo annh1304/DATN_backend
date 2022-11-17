@@ -14,7 +14,7 @@ const indexController = require('../components/index/indexcontroller');
 
 router.post('/dang-nhap', userController.login);
 router.get('/', indexController.getAll);
-
+router.get('/chart', indexController.getChart);
 
 
 // trang đăng nhập
@@ -22,6 +22,7 @@ router.get('/dang-nhap', function (req, res, next) {
   if (req.session.user && req.session) {
     res.redirect('/');
   }
+  // res.render('login', { title: 'login' });
   res.render('login', { title: 'login' });
 });
 

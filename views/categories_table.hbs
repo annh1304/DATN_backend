@@ -377,9 +377,10 @@
                                         <tbody>
                                             {{#each rows}}
                                             <tr class="table-info">
+                                                <form action=""></form>
                                                 <td><input id="categoryNameInput{{this.CATID}}" type="text"
                                                         value="{{this.CATNAME}}" disabled /></td>
-                                                <td>NaN</td>
+                                                <td>{{this.SOLUONG}}</td>
                                                 <td> <img src="{{this.IMAGE}}" alt=""></td>
                                                 <td><button id="btnEditCategory{{this.CATID}}"
                                                         onclick="onEditChange('{{this.CATID}}')">Edit</button>
@@ -392,6 +393,7 @@
                                                     <a href="#" class="btn btn-link"
                                                         onclick="onRemove('{{this._id}}')">Delete</a>
                                                 </td> --}}
+                                                </form>
                                             </tr>
                                             {{/each}}
                                         </tbody>

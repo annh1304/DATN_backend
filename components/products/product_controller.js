@@ -192,6 +192,9 @@ let status = [{
     "name": "hot"
 }, {
     "_id": 3,
+    "name": "featured"
+}, {
+    "_id": 4,
     "name": "removed"
 }]
 

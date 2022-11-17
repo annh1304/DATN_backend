@@ -1,25 +1,11 @@
 const util = require('util')
-const mysql = require('mysql')
+const jwt = require('jsonwebtoken');
+const nodemailer = require("nodemailer");
 const pool = require('../../web_connect');
+const ip = require('../../constants').IP;
+let tempToken;
 
 const tblUserController = {
-
-    // getuser: (req, res) => {
-    //     let sql = 'SELECT * FROM tbluser'
-    //     db.query(sql, (err, response) => {
-    //         if (err) console.log(err)
-    //         res.send(response)
-    //     })
-    // },
-
-    // postuser: (req, res) => {
-    //     let data = req.body;
-    //     let sql = 'INSERT INTO tbluser SET ?'
-    //     db.query(sql, [data], (err, response) => {
-    //         if (err) throw err
-    //         res.send({ message: 'Insert success!' })
-    //     })
-    // },
     //dang-nhap
     getuser: (req, res) => {
         let sql = 'SELECT * FROM tbluser'
@@ -95,7 +81,7 @@ const tblUserController = {
 
         // res.send(body);
     },
-    // cap nhat mat khau
+    //cap nhat mat khau
     updatePassword: async (req, res) => {
         const body = req.body;
         // const username = req.params.username;
@@ -140,11 +126,118 @@ const tblUserController = {
         });
 
         // res.send(body);
+    },
+    //gui email (POST)
+    reqMail: async (req, res) => {
+        const { email } = req.body;
+        let fullname;
+        let username;
+
+        pool.getConnection((err, connection) => {
+            if (err) throw err; // not connected
+            const query = `SELECT tbluser.USERNAME, tbluser.FULLNAME FROM tbluser WHERE EMAIL = '${email}'`;
+            connection.query(query, (err, name) => {
+                if (err) {
+                    // query err
+                    console.log(err);
+                } else {
+                    if (name[0]) {
+                        fullname = name[0].FULLNAME;
+                        username = name[0].USERNAME;
+                        //tạo refresh token 90 days (expires)
+                        const token = jwt.sign({ username: username, email: email },
+                            'secret', { expiresIn: 5 * 60 });//đơn vị second
+
+                        mailSender(email, fullname, username, token);
+                        res.send({ message: 'Request sent, please check your email !' });
+                    } else {
+                        res.send({ message: 'Account doesn\'t exist !' });
+                    }
+                }
+            });
+        });
+    },
+    //form dien mat khau moi (GET)
+    newPwForm: (req, res) => {
+        const { username, token } = req.params;
+        const check = checkToken(token);
+        if (!check) {
+            res.render('reset_password', check);
+        } else {
+            if (tempToken === token) {
+                res.render('reset_password', false);
+            } else { res.render('reset_password', { check, token }); }
+        }
+    },
+    //dat mat khau moi (POST)
+    newPwSend: (req, res) => {
+        const { newpassword, token } = req.body;
+        let check = checkToken(token[0]);
+        console.log(check);
+        if (!check) {
+            res.render('reset_password_result', { result: false });
+        } else {
+            if (tempToken === token[0]) {
+                res.render('reset_password', false);
+            } else {
+                console.log(newpassword);
+                const query = `UPDATE tbluser SET PASSWORD = '${newpassword.toString()}' WHERE USERNAME = '${check.username}'`;
+                pool.getConnection((err, connection) => {
+                    if (err) throw err;
+                    connection.query(query, (err, response) => {
+                        if (err) throw err;
+                        tempToken = token[0];
+                        res.render('reset_password_result', { result: true });
+                    })
+                })
+            }
+        }
     }
 
 }
 module.exports = tblUserController;
+//gửi mail
+function mailSender(email, fullname, username, token) {
+    const ipSend = ip + `/${username}/${token}`;
+    var transporter = nodemailer.createTransport({ // config mail server
+        service: 'Gmail',
+        auth: {
+            user: 'anh130422@gmail.com',
+            pass: 'ffrztgecjavsxkzd'
+        }
+    });
+    var message = {
+        from: "anh130422@gmail.com",
+        to: `${email}`,
+        subject: "Link to reset your password",
+        // text: "Hello, " + `${name}` + ", You recieved message from Yummyfood",
+        // html: `<a href=${ip}> ababababba </a>`
+        html: `<p>Hello,` + `${fullname}` + `</p><ul>
+        <li>You recieved message from Yummyfood</li>
+        <li>This link will expire in 5minute</li>
+        <li><a href=${ipSend}>Reset my password</a></li></ul>`
+    };
 
+    transporter.sendMail(message, function (err, info) {
+        if (err) {
+            console.log(err);
+            res.redirect('/');
+        } else {
+            console.log('Message sent: ' + info.response);
+            res.redirect('/');
+        }
+    });
+}
+//giải token
+function checkToken(token) {
+    try {
+        const decoded = jwt.verify(token, 'secret');
+        decoded.notExpired = true;
+        return decoded;
+    } catch (error) {
+        return false;
+    }
+}
 // exports.updateInfor = async (req, res) => {
 //     const body = req.body;
 //     // const username = req.params.username;

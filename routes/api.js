@@ -7,7 +7,8 @@ const authen = require('../middleware/authen');
 const cartCtrl = require('../components/app_controller/tblCartController');
 const foodCtrl = require('../components/app_controller/tblFoodController');
 const userCtrl = require('../components/app_controller/tblUserController');
-const orderCtrl = require('../components/app_controller/tblOrderController')
+const orderCtrl = require('../components/app_controller/tblOrderController');
+const typeFoodCtrl = require('../components/app_controller/tblTypeFoodController');
 //đăng ký
 
 
@@ -18,13 +19,21 @@ router.post("/postcard", cartCtrl.postcart);
 //food 
 router.get("/getfood", foodCtrl.getfood);
 
+//type food (menu)
+router.get("/gettypefood1", typeFoodCtrl.gettypefood1);
+router.get("/gettypefood2", typeFoodCtrl.gettypefood2);
+router.get("/gettypefood3", typeFoodCtrl.gettypefood3);
+router.get("/gettypefood4", typeFoodCtrl.gettypefood4);
+
 //user
 router.get("/getuser", userCtrl.getuser);
 router.post("/postuser", userCtrl.postuser);
 router.post("/update-infor", userCtrl.updateInfor);
 router.post("/update-password", userCtrl.updatePassword);
 router.get("/getuser-infor", userCtrl.getUserInfor);
-
+router.post("/reset-password-request", userCtrl.reqMail);
+router.get("/reset-password-form/:username/:token", userCtrl.newPwForm);
+router.post("/new-password-send", userCtrl.newPwSend);
 
 //order
 router.post("/updateOrderStatus", orderCtrl.updateorder);

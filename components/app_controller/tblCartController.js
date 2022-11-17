@@ -1,6 +1,6 @@
 const util = require('util')
 const mysql = require('mysql')
-const db = require('../../db')
+const pool = require('../../web_connect');
 
 const tblController = {
 
@@ -14,9 +14,12 @@ const tblController = {
     postcart: (req, res) => {
         let data = req.body;
         let sql = 'INSERT INTO tblcart SET ?'
-        db.query(sql, [data], (err, response) => {
-            if (err) throw err
-            res.send({ message: 'Insert success!' })
+        pool.getConnection((err, connection) => {
+            if (err) throw err;
+            connection.query(sql, [data], (err, response) => {
+                if (err) throw err
+                res.send({ message: 'Insert success!' })
+            })
         })
     },
     // deleteuser: (req, res) => {

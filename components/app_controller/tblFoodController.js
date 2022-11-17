@@ -1,14 +1,17 @@
 const util = require('util')
 const mysql = require('mysql')
-const db = require('../../db');
+const pool = require('../../web_connect');
 
 const tblFoodController = {
 
     getfood: (req, res) => {
         let sql = 'SELECT * FROM tblfood'
-        db.query(sql, (err, response) => {
-            if (err) console.log(err)
-            res.send(response)
+        pool.getConnection((err, connection) => {
+            if (err) throw err;
+            connection.query(sql, (err, response) => {
+                if (err) console.log(err)
+                res.send(response)
+            })
         })
     },
     // postfood: (req, res) => {

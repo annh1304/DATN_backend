@@ -1,4 +1,6 @@
+const { response } = require('express');
 const pool = require('../../web_connect');
+const ip = require('../../constants').IP;
 
 // exports.getAll = async (req, res) => {
 //     if (!req.session || !req.session.user) {
@@ -30,7 +32,6 @@ exports.getAll = async (req, res) => {
     if (!req.session || !req.session.user) {
         res.redirect('/dang-nhap');
     } else {
-
         pool.getConnection((err, connection) => {
             if (err) throw err; // not connected
             connection.query(`SELECT tblfood.FOODNAME FROM (tblfood INNER JOIN tblorderdetail ON tblfood.FOODID = tblorderdetail.FOODID) INNER JOIN tblorder ON tblorderdetail.ORDERID = tblorder.ORDERID WHERE tblorder.ORDSTATUS = 3 GROUP BY tblfood.FOODID, tblfood.FOODNAME
@@ -73,6 +74,112 @@ exports.getAll = async (req, res) => {
 
 }
 
+exports.getChart = async (req, res) =>{
+
+    //old
+    // let query = `SELECT  tblorder.ORDERID, MONTH(tblorder.CONFIRMTIME) AS 'MONTH', SUM(tblorderdetail.TOTAL) AS 'SOLDTOTAL' 
+    // FROM (tblorder INNER JOIN tblorderdetail ON tblorder.ORDERID = tblorderdetail.ORDERID) WHERE tblorder.ORDSTATUS = 3 GROUP BY tblorder.ORDERID ORDER BY tblorder.CONFIRMTIME ASC`;
+    
+    let query = `SELECT MONTH(tblorder.CONFIRMTIME) AS 'MONTH', SUM(tblorderdetail.TOTAL) AS 'SOLDTOTAL' 
+    FROM (tblorder INNER JOIN tblorderdetail ON tblorder.ORDERID = tblorderdetail.ORDERID) WHERE tblorder.ORDSTATUS = 3 GROUP BY MONTH ORDER BY tblorder.CONFIRMTIME ASC`;
+
+    pool.getConnection((err, connection) => {
+        if (err) throw err; // not connected
+
+        connection.query(query, (err, rows) => {
+            connection.release();
+            if (err) {
+                console.log(err);
+            } else {
+
+                const labels = months.map(function(item) {
+                    return item["name"]; 
+                   });
+                const values = getValues(rows);
+                console.log(rows)
+                res.json({labels,values});
+            }
+        })
+    });
+}
+
+
+function getValues(rows) {
+    // console.log(rows[1].MONTH);
+    let values = [];
+    for(let i=0 ;i < 12; i++){
+        values.push(0);
+    }
+    for(let u=0; u < rows.length; u++){
+        values[rows[u].MONTH-1] = rows[u].SOLDTOTAL;
+    }
+    return values;
+}
+
+let months = [{
+    "numb": 1,
+    "name": 'January'
+},{
+    "numb": 2,
+    "name": 'February'
+},{
+    "numb": 3,
+    "name": 'March'
+},{
+    "numb": 4,
+    "name": 'April'
+},{
+    "numb": 5,
+    "name": 'May'
+},{
+    "numb": 6,
+    "name": 'June'
+},{
+    "numb": 7,
+    "name": 'July'
+},{
+    "numb": 8,
+    "name": 'August'
+},{
+    "numb": 9,
+    "name": 'September'
+},{
+    "numb": 10,
+    "name": 'October'
+},{
+    "numb": 11,
+    "name": 'November'
+},{
+    "numb": 12,
+    "name": 'December'
+}]
+
+
+
+// async..await is not allowed in global scope, must use a wrapper
+// async function main() {
+  // Generate test SMTP service account from ethereal.email
+  // Only needed if you don't have a real mail account for testing
+  
+// }
+
+
+
+// for (let i = 0; i < rows.length; i++) {
+
+//     for (let y = 0; y < months.length; y++){
+//         if (Number(rows[i].MONTH) == Number(months[y].numb)){
+//             for (let u = 0; u < labels.length; u++){
+//                 if (labels[u].toString() === months[y].name.toString()){
+//                     console.log(Number(rows[i].MONTH));
+//                     console.log(Number(months[y].numb));
+//                 }else{labels.push(months[y].name);}
+//             }
+//         }
+//     }
+    
+//     // labels.push(rows[i].FOODNAME);
+// }
 
 
 //old

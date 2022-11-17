@@ -3,7 +3,6 @@ var router = express.Router();
 const userService = require('./user_service');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-var mysql = require('mysql');
 //connect to mysql;
 const pool = require('../../web_connect');
 
@@ -40,7 +39,7 @@ exports.login = async (req, res) => {
         throw new Error('error');
     }
 }
-
+//đổ lên bảng user
 exports.getAll = async (req, res) => {
     if (!req.session || !req.session.user) {
         res.redirect('/dang-nhap');
@@ -70,7 +69,7 @@ exports.getAll = async (req, res) => {
         });
     }
 }
-
+//chi tiết user
 exports.getById = async (req, res) => {
     if (!req.session || !req.session.user) {
         res.redirect('/dang-nhap');
