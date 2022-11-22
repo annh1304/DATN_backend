@@ -25,7 +25,8 @@ exports.getAll = async (req, res) => {
                     // });
                     const lables = getLabels(rows);
                     const values = getValues(rows);
-                    res.render('thong_ke', { lables, values });
+                    const username = req.session.user.USERNAME;
+                    res.render('thong_ke', { lables, values, username });
                 } else {
                     console.log(err);
                 }

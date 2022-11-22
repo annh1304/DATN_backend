@@ -29,7 +29,8 @@ exports.getAll = async (req, res) => {
                         return order;
                     });
                     console.log('abc', sentOrders);
-                    res.render('orders_table', { sentOrders });
+                    const username = req.session.user.USERNAME;
+                    res.render('orders_table', { sentOrders, username });
                 } else {
                     console.log(err);
                 }
@@ -65,7 +66,8 @@ exports.getById = async (req, res) => {
                     isPending = false;
                 }
                 // res.json(ordDetail);
-                res.render('orders_detail', { ordDetail, username, total, id, isPending });
+                const usernameAdmin = req.session.user.USERNAME;
+                res.render('orders_detail', { ordDetail, username, total, id, isPending, usernameAdmin });
             });
         });
     }

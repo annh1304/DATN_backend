@@ -17,7 +17,11 @@ router.get("/tblcart", cartCtrl.getcart);
 router.post("/postcard", cartCtrl.postcart);
 
 //food 
+// router.get("/getfood", foodCtrl.getfood);
 router.get("/getfood", foodCtrl.getfood);
+router.get("/getfoodPopular", foodCtrl.getfoodPopular);
+router.get("/getfoodFeatured", foodCtrl.getfoodFeatured);
+router.get("/getfoodNew", foodCtrl.getfoodNew);
 
 //type food (menu)
 router.get("/gettypefood1", typeFoodCtrl.gettypefood1);
@@ -36,7 +40,13 @@ router.get("/reset-password-form/:username/:token", userCtrl.newPwForm);
 router.post("/new-password-send", userCtrl.newPwSend);
 
 //order
+
+//gui don hang
 router.post("/updateOrderStatus", orderCtrl.updateorder);
+//ds history
+router.get("/orderList", orderCtrl.orderHistory);
+//history detail
+router.get("/orderList/detail", orderCtrl.orderHistoryDetail);
 
 module.exports = router;
 

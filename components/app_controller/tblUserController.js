@@ -129,13 +129,13 @@ const tblUserController = {
     },
     //gui email (POST)
     reqMail: async (req, res) => {
-        const { email } = req.body;
+        const { EMAIL } = req.body;
         let fullname;
         let username;
 
         pool.getConnection((err, connection) => {
             if (err) throw err; // not connected
-            const query = `SELECT tbluser.USERNAME, tbluser.FULLNAME FROM tbluser WHERE EMAIL = '${email}'`;
+            const query = `SELECT tbluser.USERNAME, tbluser.FULLNAME FROM tbluser WHERE EMAIL = '${EMAIL}' AND ROLE = 1`;
             connection.query(query, (err, name) => {
                 if (err) {
                     // query err
@@ -145,10 +145,10 @@ const tblUserController = {
                         fullname = name[0].FULLNAME;
                         username = name[0].USERNAME;
                         //tạo refresh token 90 days (expires)
-                        const token = jwt.sign({ username: username, email: email },
+                        const token = jwt.sign({ username: username, email: EMAIL },
                             'secret', { expiresIn: 5 * 60 });//đơn vị second
 
-                        mailSender(email, fullname, username, token);
+                        mailSender(EMAIL, fullname, username, token);
                         res.send({ message: 'Request sent, please check your email !' });
                     } else {
                         res.send({ message: 'Account doesn\'t exist !' });

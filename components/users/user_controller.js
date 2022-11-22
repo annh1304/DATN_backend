@@ -17,11 +17,9 @@ exports.login = async (req, res) => {
 
             connection.query(`SELECT USERNAME, PASSWORD FROM tbluser WHERE USERNAME = '${username}' AND PASSWORD = '${password}' AND ROLE = 0`, (err, user) => {
                 connection.release();
-                console.log('user', user);
-
                 if (!err) {
                     if (user.length > 0) {
-                        req.session.user = user;
+                        req.session.user = user[0];
                         console.log('.....', req.session.user);
                         res.redirect('/');
                     } else {
@@ -61,7 +59,8 @@ exports.getAll = async (req, res) => {
                         }
                         return row;
                     });
-                    res.render('user_table', { rows });
+                    const usernameAdmin = req.session.user.USERNAME;
+                    res.render('user_table', { rows, usernameAdmin });
                 } else {
                     console.log(err);
                 }
@@ -90,9 +89,9 @@ exports.getById = async (req, res) => {
                         }
                         return u;
                     });
-
+                    const usernameAdmin = req.session.user.USERNAME;
                     // res.render('', { user });
-                    console.log('user-detail', user);
+                    console.log('user-detail', { user, usernameAdmin });
                 } else {
                     console.log(err);
                 }

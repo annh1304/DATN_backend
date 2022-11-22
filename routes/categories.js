@@ -14,7 +14,8 @@ router.get('/them-danh-muc', async function (req, res, next) {
         res.redirect('/dang-nhap');
     } else {
         // const categories = await categoryController.get();
-        res.render('empty_category_form');
+        const username = req.session.user.USERNAME;
+        res.render('empty_category_form', { username });
     }
 })
 //middleware
@@ -33,13 +34,14 @@ router.post('/them-danh-muc', [middleware.single('image')], async function (req,
 });
 /*Get product by ID
 http://localhost:1304/san-pham*/
-router.get('/detail/:id', async function (req, res, next) {
-    const { id } = req.params;// hoặc const _id = req.params.id
-    const { product, categories } = await productController.getById(id);
-    // const categories = await categoryController.get();
-    res.render('product_detail', { product, categories });
-    console.log({ product }, id);
-});
+// router.get('/detail/:id', async function (req, res, next) {
+//     const { id } = req.params;// hoặc const _id = req.params.id
+//     const { product, categories } = await productController.getById(id);
+//     // const categories = await categoryController.get();
+//     const username = req.session.user.USERNAME;
+//     res.render('product_detail', { username, categories });
+//     console.log({ product }, id);
+// });
 
 router.post('/detail/:id', [middleware.single('image')], async function (req, res, next) {
     let { body, file } = req;

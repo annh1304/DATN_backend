@@ -19,6 +19,44 @@ const tblOrderController = {
         })
     },
 
+    getorder: (req, res) => {
+        let sql = 'SELECT tblfood.FOODID , tblfood.FOODNAME , tblfood.IMAGE , tblorder.USERNAME , tblorderdetail.QUANTITY , tblorderdetail.TOTAL FROM ((tblorderdetail INNER JOIN tblfood ON tblorderdetail.FOODID = tblfood.FOODID) INNER JOIN tblorder ON tblorderdetail.ORDERID = tblorder.ORDERID ) WHERE tblorder.ORDSTATUS = 1 ORDER BY tblorder.USERNAME ASC'
+        pool.getConnection((err, connection) => {
+            if (err) throw err;
+            connection.query(sql, [username, orderId], (err, response) => {
+                if (err) throw err
+                res.send(response)
+            })
+        })
+    },
+
+    //chitiet donhang
+    orderHistoryDetail: (req, res) => {
+        const { username, orderid } = req.query;
+        const query = `SELECT tblfood.FOODNAME, tblfood.IMAGE, tblfood.PRICE, tblorderdetail.QUANTITY, tblorderdetail.TOTAL
+        FROM (tblorderdetail INNER JOIN tblfood ON tblorderdetail.FOODID = tblfood.FOODID)
+        INNER JOIN tblorder ON tblorderdetail.ORDERID = tblorder.ORDERID  WHERE tblorder.USERNAME = '${username}'  AND tblorder.ORDERID = ${orderid} AND tblorder.ORDSTATUS != 1 `;
+        pool.getConnection((err, connection) => {
+            if (err) throw err;
+            connection.query(query, (err, orederDetail) => {
+                if (err) throw err
+                res.send(orederDetail)
+            })
+        })
+    },
+    //lich su donhang
+    orderHistory: (req, res) => {
+        const { username } = req.query;
+        const query = `SELECT tblorder.ORDERID, tblorder.ADDRESS, DATE(tblorder.ORDERTIME) AS 'TIME', SUM(tblorderdetail.TOTAL) AS 'TOTAL', tblorder.ORDSTATUS from tblorder INNER JOIN tblorderdetail ON tblorder.ORDERID = tblorderdetail.ORDERID WHERE USERNAME = '${username}' AND ORDSTATUS != 1 GROUP BY tblorder.ORDERID; `
+        pool.getConnection((err, connection) => {
+            if (err) throw err;
+            connection.query(query, (err, orderArr) => {
+                if (err) throw err
+                console.log(orderArr);
+                res.send(orderArr)
+            })
+        })
+    }
 }
 module.exports = tblOrderController;
 

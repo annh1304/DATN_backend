@@ -56,12 +56,13 @@ exports.getAll = async (req, res) => {
                             var list = JSON.stringify(data);
                             var json = JSON.parse(list);
                             console.log(json);
+                            const username = req.session.user.USERNAME;
                             res.render('index', {
                                 food,
                                 money,
                                 count,
-                                json
-    
+                                json,
+                                username
                             });
                         });
                     });

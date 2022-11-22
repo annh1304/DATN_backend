@@ -14,29 +14,35 @@ const tblFoodController = {
             })
         })
     },
-    // postfood: (req, res) => {
-    //     let data = req.body;
-    //     let sql = 'INSERT INTO tblcart SET ?'
-    //     db.query(sql, [data], (err, response) => {
-    //         if (err) throw err
-    //         res.send({ message: 'Insert success!' })
-    //     })
-    // },
-    // deleteuser: (req, res) => {
-    //     let sql = 'DELETE FROM user WHERE idUser = ?'
-    //     db.query(sql, [req.params.idUser], (err, response) => {
-    //         if (err) throw err
-    //         res.send({ message: 'Delete success!' })
-    //     })
-    // },
-    // updateuser: (req, res) => {
-    //     let data = req.body;
-    //     let idUser = req.params.idUser;
-    //     let sql = 'UPDATE user SET ? WHERE idUser = ?'
-    //     db.query(sql, [data, idUser], (err, response) => {
-    //         if (err) throw err
-    //         res.json({message: 'Update success!'})
-    //     })
-    // },
+    getfoodPopular: (req, res) => {
+        let sql = 'SELECT * FROM tblfood WHERE tblfood.STATUS = "hot"'
+        pool.getConnection((err, connection) => {
+            if (err) throw err;
+            connection.query(sql, (err, response) => {
+                if (err) console.log(err)
+                res.send(response)
+            })
+        })
+    },
+    getfoodFeatured: (req, res) => {
+        let sql = 'SELECT * FROM tblfood WHERE tblfood.STATUS = "featured"'
+        pool.getConnection((err, connection) => {
+            if (err) throw err;
+            connection.query(sql, (err, response) => {
+                if (err) console.log(err)
+                res.send(response)
+            })
+        })
+    },
+    getfoodNew: (req, res) => {
+        let sql = 'SELECT * FROM tblfood WHERE tblfood.STATUS = "new"'
+        pool.getConnection((err, connection) => {
+            if (err) throw err;
+            connection.query(sql, (err, response) => {
+                if (err) console.log(err)
+                res.send(response)
+            })
+        })
+    },
 }
 module.exports = tblFoodController;

@@ -2,7 +2,6 @@ const productService = require('./product_service');
 const categoryService = require('../categories/category_service');
 const pool = require('../../web_connect');
 
-
 exports.getAll = async (req, res) => {
     if (!req.session || !req.session.user) {
         res.redirect('/dang-nhap');
@@ -27,7 +26,9 @@ exports.getAll = async (req, res) => {
                         }
                         return row;
                     });
-                    res.render('products_table', { rows });
+                    const usernameAdmin = req.session.user.USERNAME;
+                    console.log('check username', usernameAdmin)
+                    res.render('products_table', { rows, usernameAdmin });
                 } else {
                     console.log(err);
                 }
@@ -77,8 +78,8 @@ exports.getById = async (req, res) => {
                     })
 
                     // console.log(categories, food);
-
-                    res.render('product_detail', { food, categories, status });
+                    const usernameAdmin = req.session.user.USERNAME;
+                    res.render('product_detail', { food, categories, status, usernameAdmin });
                 });
             });
         });
@@ -135,8 +136,8 @@ exports.addFoodForm = async (req, res) => {
             connection.query(`SELECT CATID, CATNAME FROM tblcategories`, (err, categories) => {
                 connection.release();
                 if (!err) {
-
-                    res.render('empty_product_form', { categories, status });
+                    const usernameAdmin = req.session.user.USERNAME;
+                    res.render('empty_product_form', { categories, status, usernameAdmin });
                 } else {
                     console.log(err);
                 }

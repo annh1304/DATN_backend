@@ -13,7 +13,8 @@ exports.getAll = async (req, res) => {
             connection.query(query, (err, rows) => {
                 connection.release();
                 if (!err) {
-                    res.render('categories_table', { rows });
+                    const username = req.session.user.USERNAME;
+                    res.render('categories_table', { rows, username });
                 } else {
                     console.log(err);
                 }
