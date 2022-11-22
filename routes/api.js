@@ -13,9 +13,9 @@ const typeFoodCtrl = require('../components/app_controller/tblTypeFoodController
 
 
 //cart
-router.get("/tblcart", cartCtrl.getcart);
-router.post("/postcard", cartCtrl.postcart);
-
+// router.get("/tblcart", cartCtrl.getcart);
+router.post("/postcart", cartCtrl.postcart);
+router.post("/postitemcard", cartCtrl.postitemcard);
 //food 
 // router.get("/getfood", foodCtrl.getfood);
 router.get("/getfood", foodCtrl.getfood);
