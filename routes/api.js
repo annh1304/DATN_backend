@@ -15,13 +15,17 @@ const typeFoodCtrl = require('../components/app_controller/tblTypeFoodController
 //cart
 // router.get("/tblcart", cartCtrl.getcart);
 router.post("/postcart", cartCtrl.postcart);
-router.post("/postitemcard", cartCtrl.postitemcard);
+router.post("/postitemcard", cartCtrl.postitemcart);
 //food 
 // router.get("/getfood", foodCtrl.getfood);
 router.get("/getfood", foodCtrl.getfood);
 router.get("/getfoodPopular", foodCtrl.getfoodPopular);
 router.get("/getfoodFeatured", foodCtrl.getfoodFeatured);
 router.get("/getfoodNew", foodCtrl.getfoodNew);
+// //favourite
+router.get("/getfavourite", foodCtrl.getFavouriteList);
+router.get("/checkfavourite", foodCtrl.checkFavourite);
+router.post("/postfavourite", foodCtrl.postFavourite);
 
 //type food (menu)
 router.get("/gettypefood1", typeFoodCtrl.gettypefood1);
@@ -40,7 +44,7 @@ router.get("/reset-password-form/:username/:token", userCtrl.newPwForm);
 router.post("/new-password-send", userCtrl.newPwSend);
 
 //order
-
+router.get("/getorder", orderCtrl.getorder);
 //gui don hang
 router.post("/updateOrderStatus", orderCtrl.updateorder);
 //ds history

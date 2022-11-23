@@ -20,10 +20,11 @@ const tblOrderController = {
     },
 
     getorder: (req, res) => {
-        let sql = 'SELECT tblfood.FOODID , tblfood.FOODNAME , tblfood.IMAGE , tblorder.USERNAME , tblorderdetail.QUANTITY , tblorderdetail.TOTAL FROM ((tblorderdetail INNER JOIN tblfood ON tblorderdetail.FOODID = tblfood.FOODID) INNER JOIN tblorder ON tblorderdetail.ORDERID = tblorder.ORDERID ) WHERE tblorder.ORDSTATUS = 1 ORDER BY tblorder.USERNAME ASC'
+        const { USERNAME } = req.query;
+        const sql = `SELECT tblfood.FOODID , tblfood.FOODNAME , tblfood.IMAGE , tblorderdetail.QUANTITY , tblorderdetail.TOTAL FROM ((tblorderdetail INNER JOIN tblfood ON tblorderdetail.FOODID = tblfood.FOODID) INNER JOIN tblorder ON tblorderdetail.ORDERID = tblorder.ORDERID ) WHERE tblorder.ORDSTATUS = 1 AND tblorder.USERNAME = '${USERNAME}' `
         pool.getConnection((err, connection) => {
             if (err) throw err;
-            connection.query(sql, [username, orderId], (err, response) => {
+            connection.query(sql, (err, response) => {
                 if (err) throw err
                 res.send(response)
             })
