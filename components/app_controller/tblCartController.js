@@ -5,7 +5,7 @@ const pool = require('../../web_connect');
 const tblController = {
 
     getcart: (req, res) => {
-        let sql = 'SELECT * FROM tblcart'
+        let sql = 'SELECT FOODNAME, IMAGE, tblcart.QUANTITY, PRICE FROM `tblfood` INNER JOIN `tblcart` ON tblfood.FOODID = tblcart.FOODID WHERE tblcart.USERNAME = "dat009";'
         db.query(sql, (err, response) => {
             if (err) console.log(err)
             res.send(response)
@@ -13,12 +13,23 @@ const tblController = {
     },
     postcart: (req, res) => {
         let data = req.body;
+        let sql = 'SELECT * FROM yummyfood.tblcart a,yummyfood.tblfood b WHERE a.FOODID=b.FOODID and a.USERNAME =?'
+        pool.getConnection((err, connection) => {
+            if (err) throw err;
+            connection.query(sql, [data.USERNAME], (err, response) => {
+                if (err) throw err
+                res.send(response);
+            })
+        })
+    },
+    postitemcart: (req, res) => {
+        let data = req.body;
         let sql = 'INSERT INTO tblcart SET ?'
         pool.getConnection((err, connection) => {
             if (err) throw err;
             connection.query(sql, [data], (err, response) => {
                 if (err) throw err
-                res.send({ message: 'Insert success!' })
+                res.send({ message: 'Insert success!' });
             })
         })
     },
