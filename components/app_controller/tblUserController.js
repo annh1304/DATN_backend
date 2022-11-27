@@ -7,13 +7,24 @@ let tempToken;
 
 const tblUserController = {
     //dang-nhap
-    getuser: (req, res) => {
-        let sql = 'SELECT * FROM tbluser'
+    postLogin: (req, res) => {
+        const { EMAIL, PASSWORD } = req.body;
+        console.log(EMAIL);
+        const sql = `SELECT * FROM tbluser WHERE EMAIL = '${EMAIL}' AND ROLE = 1 AND STATUS != 'banned'`;
+
         pool.getConnection((err, connection) => {
             if (err) throw err;
             connection.query(sql, (err, response) => {
                 if (err) console.log(err)
-                res.send(response)
+                if (response.length == 0) {
+                    res.send({ 'USERNAME': 'Wrong email or password' });
+                } else {
+                    if (PASSWORD === response[0].PASSWORD) {
+                        res.send(response[0]);
+                    } else {
+                        res.send({ 'USERNAME': 'Wrong email or password' });
+                    }
+                }
             })
         })
     },

@@ -34,7 +34,7 @@ router.get("/gettypefood3", typeFoodCtrl.gettypefood3);
 router.get("/gettypefood4", typeFoodCtrl.gettypefood4);
 
 //user
-router.get("/getuser", userCtrl.getuser);
+router.post("/login", userCtrl.postLogin);
 router.post("/postuser", userCtrl.postuser);
 router.post("/update-infor", userCtrl.updateInfor);
 router.post("/update-password", userCtrl.updatePassword);
@@ -46,7 +46,7 @@ router.post("/new-password-send", userCtrl.newPwSend);
 //order
 router.get("/getorder", orderCtrl.getorder);
 //gui don hang
-router.post("/updateOrderStatus", orderCtrl.updateorder);
+router.post("/postorder", orderCtrl.updateorder);
 //ds history
 router.get("/orderList", orderCtrl.orderHistory);
 //history detail

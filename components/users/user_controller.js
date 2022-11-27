@@ -77,7 +77,7 @@ exports.getById = async (req, res) => {
         pool.getConnection((err, connection) => {
             if (err) throw err; // not connected
 
-            connection.query(`SELECT USERNAME, FULLNAME, EMAIL, ADDRESS, PHONENUMBER, DATEOFBIRTH, STATUS FROM tbluser WHERE USERNAME = '${username}' `, (err, user) => {
+            connection.query(`SELECT USERNAME, FULLNAME, EMAIL, ADDRESS, IMAGE, PHONENUMBER, DATEOFBIRTH, STATUS FROM tbluser WHERE USERNAME = '${username}' `, (err, user) => {
                 connection.release();
                 if (!err) {
                     user = user.map(u => {
@@ -92,6 +92,7 @@ exports.getById = async (req, res) => {
                     const usernameAdmin = req.session.user.USERNAME;
                     // res.render('', { user });
                     console.log('user-detail', { user, usernameAdmin });
+                    res.render('user_detail', { user, usernameAdmin });
                 } else {
                     console.log(err);
                 }
@@ -101,7 +102,14 @@ exports.getById = async (req, res) => {
 }
 
 exports.banUser = async (req, res) => {
-
+    const { username } = req.body;
+    const query = `UPDATE tbluser SET STATUS = 'banned' WHERE USERNAME = '${username}'`
+    pool.getConnection((err, connection) => {
+        if (err) throw err;
+        connection.query(query, (err, response) => {
+            res.redirect('/nguoi-dung?page=1');
+        })
+    })
 }
 
 //mobile

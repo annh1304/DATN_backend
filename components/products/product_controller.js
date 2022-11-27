@@ -158,13 +158,13 @@ exports.addFood = async (req, res) => {
             image: image
         };
         query = `INSERT INTO tblfood (FOODNAME, QUANTITY, PRICE, CATID, STATUS, IMAGE)
-            VALUES ('${body.name}', ${body.quantity}, ${body.price}, ${body.category_id}, ${body.status}, '${body.image}');`;
+            VALUES ('${body.name}', ${body.quantity}, ${body.price}, ${body.category_id}, '${body.status}', '${body.image}');`;
     }
     if (!body.image) {
         delete body.image;
 
         query = `INSERT INTO tblfood (FOODNAME, QUANTITY, PRICE, CATID, STATUS)
-            VALUES ('${body.name}', ${body.quantity}, ${body.price}, ${body.category_id}, ${body.status});`;
+            VALUES ('${body.name}', ${body.quantity}, ${body.price}, ${body.category_id}, '${body.status}');`;
     }
 
     console.log('body', body);

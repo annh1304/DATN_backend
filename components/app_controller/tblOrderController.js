@@ -5,16 +5,32 @@ const pool = require('../../web_connect');
 const tblOrderController = {
 
     updateorder: (req, res) => {
-        const body = req.body;
-        console.log(body);
-        let username = body.USERNAME;
-        let orderId = body.orderId;
-        let sql = 'UPDATE tblorder SET ORDSTATUS = 2 WHERE USERNAME = ? AND ORDERID = ?'
+        const data = req.body;
         pool.getConnection((err, connection) => {
             if (err) throw err;
-            connection.query(sql, [username, orderId], (err, response) => {
+            connection.query('INSERT INTO tblorder( `USERNAME`, `ADDRESS`, `PHONENUMBER`, `PAYMENTID`, `ORDSTATUS`) VALUES (?,?,?,1,2)', [data.username, data.address, data.phonenumber], (err, response) => {
                 if (err) throw err
-                res.send({ message: 'Order success!' })
+                res.send({ message: 'Insert order success!' });
+
+                //Lấy orderid bằng cách truy vấn theo username và ORDERTIME (thời gian tạo) giảm dần bởi order dc thêm vào là mới nhất
+                connection.query('SELECT ORDERID FROM tblorder WHERE tblorder.USERNAME = ? ORDER BY ORDERTIME DESC LIMIT 1 ', [data.username], function (err, orderid) {
+                    if (err) throw err
+                    // res.send({message: 'Get orderid success!'})
+                    console.log("OrderId:", orderid[0].ORDERID);
+                    //Từ orderid có được thực hiện query để add dữ liệu từ cart sang orderdetail trên orđerid
+                    connection.query('INSERT INTO tblorderdetail (ORDERID, FOODID, QUANTITY) SELECT ?, tblcart.FOODID, tblcart.QUANTITY FROM tblcart WHERE tblcart.USERNAME = ?', [orderid[0].ORDERID, data.username], function (err, result) {
+                        if (err) throw err
+                        // res.send({
+                        //     message: 'Add to Order Succes!'
+                        // });
+
+                        //Xóa cart người dùng
+                        connection.query('DELETE FROM tblcart WHERE USERNAME = ? ', [data.username], function (err, result) {
+                            if (err) throw err
+                            // res.send({message: 'Delete Cart Succes!' });
+                        })
+                    })
+                })
             })
         })
     },

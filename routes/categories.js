@@ -9,29 +9,10 @@ const middleware = require('../middleware/upload');
 http://localhost:1304/danh-muc */
 router.get('/', categoryController.getAll);
 //Add product http://localhost:1304/san-pham/them-san-pham*/
-router.get('/them-danh-muc', async function (req, res, next) {
-    if (!req.session || !req.session.user) {
-        res.redirect('/dang-nhap');
-    } else {
-        // const categories = await categoryController.get();
-        const username = req.session.user.USERNAME;
-        res.render('empty_category_form', { username });
-    }
-})
-//middleware
-router.post('/them-danh-muc', [middleware.single('image')], async function (req, res, next) {
-    // const {name, price, quantity, category_id} = req.body;
-    // res.render('empty_product_form', {categories});
-    let { body, file } = req;
-    if (file) {
-        let image = `https://product-manage-v1.herokuapp.com/images/data/${file.filename}`;
-        // console.log(image);
-        body = { ...body, image: image }
-    }
-    // await productController.insert(body);
+router.post('/them-danh-muc', [middleware.single('image')], categoryController.create);
+router.get('/cap-nhat/:id/:name', categoryController.update);
 
-    res.redirect('/danh-muc');
-});
+//middleware
 /*Get product by ID
 http://localhost:1304/san-pham*/
 // router.get('/detail/:id', async function (req, res, next) {
@@ -43,18 +24,6 @@ http://localhost:1304/san-pham*/
 //     console.log({ product }, id);
 // });
 
-router.post('/detail/:id', [middleware.single('image')], async function (req, res, next) {
-    let { body, file } = req;
-
-    const { id } = req.params;
-    delete body.image;
-    if (file) {
-        let image = `https://product-manage-v1.herokuapp.com/images/data/${file.filename}`;
-        body = { ...body, image: image };
-    }
-    await productController.update(id, body);
-    res.redirect('/san-pham');
-});
 
 router.post('/remove/:id', async function (req, res, next) {
     let { id } = req.params;
