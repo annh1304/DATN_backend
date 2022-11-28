@@ -17,7 +17,7 @@ const tblController = {
     postcart: (req, res) => {
         let data = req.body;
         console.log("aaaaaaa" + data.USERNAME);
-        let sql = 'SELECT * FROM yummyfood.tblcart a,yummyfood.tblfood b WHERE a.FOODID=b.FOODID and a.USERNAME =?'
+        let sql = 'SELECT a.QUANTITY, b.IMAGE, b.FOODNAME, b.PRICE FROM yummyfood.tblcart a,yummyfood.tblfood b WHERE a.FOODID=b.FOODID and a.USERNAME = ?'
         pool.getConnection((err, connection) => {
             if (err) throw err;
             connection.query(sql, [data.USERNAME], (err, response) => {
