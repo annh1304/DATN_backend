@@ -13,7 +13,7 @@ const tblOrderController = {
         pool.getConnection((err, connection) => {
             if (err) throw err;
             connection.query(sql, [username, orderId], (err, response) => {
-                if (err) throw err
+                if (err) throw err 
                 res.send({ message: 'Order success!' })
             })
         })
