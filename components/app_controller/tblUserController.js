@@ -3,13 +3,13 @@ const jwt = require('jsonwebtoken');
 const nodemailer = require("nodemailer");
 const pool = require('../../web_connect');
 const ip = require('../../constants').IP;
+const bcrypt = require('bcryptjs');
 let tempToken;
 
 const tblUserController = {
     //dang-nhap
-    postLogin: (req, res) => {
+    postLogin: async (req, res) => {
         const { EMAIL, PASSWORD } = req.body;
-        console.log(EMAIL);
         const sql = `SELECT * FROM tbluser WHERE EMAIL = '${EMAIL}' AND ROLE = 1 AND STATUS != 'banned'`;
 
         pool.getConnection((err, connection) => {
@@ -19,7 +19,9 @@ const tblUserController = {
                 if (response.length == 0) {
                     res.send({ 'USERNAME': 'Wrong email or password' });
                 } else {
-                    if (PASSWORD === response[0].PASSWORD) {
+                    const check = bcrypt.compareSync(PASSWORD, response[0].PASSWORD);
+                    console.log(check);
+                    if (check) {
                         res.send(response[0]);
                     } else {
                         res.send({ 'USERNAME': 'Wrong email or password' });
@@ -29,16 +31,39 @@ const tblUserController = {
         })
     },
     //dang-ky
-    postuser: (req, res) => {
-        let data = req.body;
-        let sql = 'INSERT INTO tbluser SET ?'
+    postuser: async (req, res) => {
+        const { USERNAME, FULLNAME, EMAIL, PASSWORD } = req.body;
+        const hashPassword = await bcrypt.hashSync(PASSWORD, 10);
+        let sql = `INSERT INTO tbluser (USERNAME, FULLNAME, EMAIL, PASSWORD) VAlUES ('${USERNAME}', '${FULLNAME}', '${EMAIL}', '${hashPassword}')`;
+
         pool.getConnection((err, connection) => {
             if (err) throw err;
-            connection.query(sql, [data], (err, response) => {
+            connection.query(`SELECT USERNAME from tbluser WHERE USERNAME = '${USERNAME}'`, (err, response) => {
                 if (err) throw err
-                res.send({ message: 'Insert success!' })
+                if (response.length == 0) {
+
+                    connection.query(`SELECT EMAIL from tbluser WHERE EMAIL = '${EMAIL}'`, (err, response) => {
+                        if (err) throw err
+                        if (response.length == 0) {
+
+                            connection.query(sql, (err, response) => {
+                                if (err) throw err
+                                res.send({ USERNAME: 'Sign Up Successful' })
+                            })
+
+                        } else if (response[0].EMAIL === EMAIL) {
+                            res.send({ USERNAME: 'Email existed' })
+                        }
+
+                    })
+
+                } else if (response[0].USERNAME === USERNAME) {
+                    res.send({ USERNAME: 'Username existed' })
+                }
+
             })
         })
+
     },
     //lay thong tin user
     getUserInfor: (req, res) => {
@@ -54,7 +79,6 @@ const tblUserController = {
                     console.log(user);
                     res.send(user[0]);
                     // res.json(user);
-                    console.log(err);
                 } else {
                     // res.redirect('/dang-nhap');
 
@@ -95,10 +119,6 @@ const tblUserController = {
     //cap nhat mat khau
     updatePassword: async (req, res) => {
         const body = req.body;
-        // const username = req.params.username;
-        // const query = `UPDATE tbluser
-        // SET FULLNAME = '${body.FULLNAME}', EMAIL = '${body.EMAIL}', ADDRESS = ${body.ADDRESS}
-        // , PHONENUMBER = ${body.PHONENUMBER}, DATEOFBIRTH = '${body.DATEOFBIRTH} WHERE USERNAME = ${body.USERNAME};`;
         pool.getConnection((err, connection) => {
             if (err) throw err; // not connected
 
@@ -114,10 +134,11 @@ const tblUserController = {
                     const oldPassword = body.OLDPASSWORD;
                     const newPassword = body.NEWPASSWORD;
                     //giải mã hóa pass hay làm j đó bla blab;
-                    if (presentPassword.toString() === oldPassword.toString()) {
+                    const check = bcrypt.compareSync(oldPassword, presentPassword);
+                    if (check) {
 
                         const newQuery = `UPDATE tbluser
-                        SET PASSWORD = '${newPassword}' WHERE USERNAME = '${body.USERNAME}';`
+                        SET PASSWORD = '${bcrypt.hashSync(newPassword, 10)}' WHERE USERNAME = '${body.USERNAME}';`
 
                         connection.query(newQuery, (err, response) => {
                             if (err) {
@@ -181,8 +202,9 @@ const tblUserController = {
         }
     },
     //dat mat khau moi (POST)
-    newPwSend: (req, res) => {
+    newPwSend: async (req, res) => {
         const { newpassword, token } = req.body;
+        const hashPassword = await bcrypt.hashSync(newpassword, 10);
         let check = checkToken(token[0]);
         console.log(check);
         if (!check) {
@@ -192,7 +214,7 @@ const tblUserController = {
                 res.render('reset_password', false);
             } else {
                 console.log(newpassword);
-                const query = `UPDATE tbluser SET PASSWORD = '${newpassword.toString()}' WHERE USERNAME = '${check.username}'`;
+                const query = `UPDATE tbluser SET PASSWORD = '${hashPassword}' WHERE USERNAME = '${check.username}'`;
                 pool.getConnection((err, connection) => {
                     if (err) throw err;
                     connection.query(query, (err, response) => {

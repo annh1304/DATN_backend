@@ -10,15 +10,17 @@ const pool = require('../../web_connect');
 //post Login web;
 // gọi từ routerIndex;
 exports.login = async (req, res) => {
-    const { username, password } = req.body;
+    const { email, password } = req.body;
     try {
         pool.getConnection((err, connection) => {
             if (err) throw err; // not connected
-
-            connection.query(`SELECT USERNAME, PASSWORD FROM tbluser WHERE USERNAME = '${username}' AND PASSWORD = '${password}' AND ROLE = 0`, (err, user) => {
+            connection.query(`SELECT USERNAME, PASSWORD FROM tbluser WHERE EMAIL = '${email}' AND ROLE = 0`, (err, user) => {
                 connection.release();
-                if (!err) {
-                    if (user.length > 0) {
+                if (err) throw err;
+
+                if (user.length > 0) {
+                    const check = bcrypt.compareSync(password, user[0].PASSWORD);
+                    if (check) {
                         req.session.user = user[0];
                         console.log('.....', req.session.user);
                         res.redirect('/');
@@ -28,10 +30,10 @@ exports.login = async (req, res) => {
                     }
                 } else {
                     res.redirect('/dang-nhap');
-                    console.log(err);
+                    console.log('err', 'dang nhap k thanh cong');
                 }
-
             });
+
         });
     } catch (error) {
         throw new Error('error');

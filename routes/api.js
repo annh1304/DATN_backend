@@ -30,10 +30,7 @@ router.get("/checkfavourite", foodCtrl.checkFavourite);
 router.post("/postfavourite", foodCtrl.postFavourite);
 
 //type food (menu)
-router.get("/gettypefood1", typeFoodCtrl.gettypefood1);
-router.get("/gettypefood2", typeFoodCtrl.gettypefood2);
-router.get("/gettypefood3", typeFoodCtrl.gettypefood3);
-router.get("/gettypefood4", typeFoodCtrl.gettypefood4);
+router.get("/gettypefood", typeFoodCtrl.gettypefood);
 
 //user
 router.post("/login", userCtrl.postLogin);
