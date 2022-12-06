@@ -24,10 +24,16 @@ router.get("/getfood", foodCtrl.getfood);
 router.get("/getfoodPopular", foodCtrl.getfoodPopular);
 router.get("/getfoodFeatured", foodCtrl.getfoodFeatured);
 router.get("/getfoodNew", foodCtrl.getfoodNew);
+
+// //comment
+router.get("/getcomment", foodCtrl.getComment);
+router.post("/postcomment", foodCtrl.postComment);
+
 // //favourite
 router.get("/getfavourite", foodCtrl.getFavouriteList);
 router.get("/checkfavourite", foodCtrl.checkFavourite);
 router.post("/postfavourite", foodCtrl.postFavourite);
+router.post("/deletefavourite", foodCtrl.deleteFavourite);
 
 //type food (menu)
 router.get("/gettypefood", typeFoodCtrl.gettypefood);

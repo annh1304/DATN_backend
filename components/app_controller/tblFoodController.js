@@ -68,6 +68,17 @@ const tblFoodController = {
             })
         })
     },
+    deleteFavourite: (req, res) => {
+        const { USERNAME , FOODID } = req.body;
+        let sql = `DELETE FROM tblfavourite WHERE USERNAME ='${USERNAME}' AND FOODID = ${FOODID}`;
+        pool.getConnection((err, connection) => {
+            if (err) throw err;
+            connection.query(sql, (err, response) => {
+                if (err) throw err;
+                    res.send({ message: 'Unliked' })
+            })
+        })
+    },
     checkFavourite: (req, res) => {
         const { FOODID, USERNAME } = req.query;
         const sql = `SELECT * FROM tblfavourite WHERE USERNAME ='${USERNAME}' AND FOODID = ${FOODID}`
@@ -82,7 +93,29 @@ const tblFoodController = {
                 }
             })
         })
-    }
+    },
+    getComment: (req, res) => {
+        const { FOODID } = req.query;
+        const query = `SELECT * FROM tblcomment WHERE tblcomment.FOODID = '${FOODID}'`
+        pool.getConnection((err, connection) => {
+            if (err) throw err;
+            connection.query(query, (err, comment) => {
+                if (err) throw err;
+                res.send(comment)
+            })
+        })
+    },
+    postComment: (req, res) => {
+        const { FOODID,USERNAME , COMMENT } = req.body;
+        let sql = `INSERT INTO tblcomment (FOODID,USERNAME,COMMENT) VALUES (${FOODID},'${USERNAME}','${COMMENT}')`;
+        pool.getConnection((err, connection) => {
+            if (err) throw err;
+            connection.query(sql, (err, response) => {
+                if (err) throw err;
+                res.send({ message: 'Commented' })
+            })
+        })
+    },
 
 }
 module.exports = tblFoodController;
