@@ -14,7 +14,7 @@ exports.getAll = async (req, res) => {
             if (err) throw err; // not connected
 
             // connection.query(`SELECT TBLFOOD.FOODID, TBLFOOD.FOODNAME, TBLFOOD.PRICE, TBLFOOD.IMAGE, TBLFOOD.STATUS, TBLCATEGORIES.CATNAME FROM TBLFOOD INNER JOIN TBLCATEGORIES ON TBLFOOD.CATID = TBLCATEGORIES.CATID WHERE TBLFOOD.FOODID BETWEEN ${parseInt(from) + 1} AND ${tO}`, (err, rows) => {
-            connection.query(`SELECT tblfood.FOODID, tblfood.FOODNAME, tblfood.PRICE, tblfood.IMAGE, tblfood.STATUS, tblcategories.CATNAME FROM tblfood INNER JOIN tblcategories ON tblfood.CATID = tblcategories.CATID LIMIT 5 OFFSET ${skip}`, (err, rows) => {
+            connection.query(`SELECT tblfood.FOODID, tblfood.FOODNAME, tblfood.PRICE, tblfood.IMAGE, tblfood.STATUS, tblcategories.CATNAME FROM tblfood INNER JOIN tblcategories ON tblfood.CATID = tblcategories.CATID ORDER BY tblfood.FOODID LIMIT 5 OFFSET ${skip}`, (err, rows) => {
                 connection.release();
                 if (!err) {
                     rows = rows.map(row => {

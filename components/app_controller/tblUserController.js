@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const nodemailer = require("nodemailer");
 const pool = require('../../web_connect');
 const ip = require('../../constants').IP;
+const baseIp = require('../../constants').baseip;
 const bcrypt = require('bcryptjs');
 let tempToken;
 
@@ -10,7 +11,7 @@ const tblUserController = {
     //dang-nhap
     postLogin: async (req, res) => {
         const { EMAIL, PASSWORD } = req.body;
-        const sql = `SELECT * FROM tbluser WHERE EMAIL = '${EMAIL}' AND ROLE = 1 AND STATUS != 'banned'`;
+        const sql = `SELECT * FROM tbluser WHERE EMAIL = '${EMAIL}' AND ROLE = 1`;
 
         pool.getConnection((err, connection) => {
             if (err) throw err;
@@ -22,7 +23,8 @@ const tblUserController = {
                     const check = bcrypt.compareSync(PASSWORD, response[0].PASSWORD);
                     console.log(check);
                     if (check) {
-                        res.send(response[0]);
+                        if (response[0].STATUS === "banned") { res.send({ 'USERNAME': 'banned' }) }
+                        else { res.send(response[0]); }
                     } else {
                         res.send({ 'USERNAME': 'Wrong email or password' });
                     }

@@ -1,6 +1,6 @@
 const util = require('util')
 const mysql = require('mysql')
-const pool = require('../../web_connect'); 
+const pool = require('../../web_connect');
 
 const tblOrderController = {
 
@@ -18,7 +18,8 @@ const tblOrderController = {
                     // res.send({message: 'Get orderid success!'})
                     console.log("OrderId:", orderid[0].ORDERID);
                     //Từ orderid có được thực hiện query để add dữ liệu từ cart sang orderdetail trên orđerid
-                    connection.query('INSERT INTO tblorderdetail (ORDERID, FOODID, QUANTITY) SELECT ?, tblcart.FOODID, tblcart.QUANTITY FROM tblcart WHERE tblcart.USERNAME = ?', [orderid[0].ORDERID, data.USERNAME], function (err, result) {
+                    const sql = `INSERT INTO tblorderdetail (ORDERID, FOODID, QUANTITY, TOTAL) SELECT ${orderid[0].ORDERID}, tblcart.FOODID, tblcart.QUANTITY, tblcart.QUANTITY*tblfood.PRICE AS TOTAL FROM (tblcart INNER JOIN tblfood ON tblcart.FOODID = tblfood.FOODID) WHERE tblcart.USERNAME = '${data.USERNAME}'`;
+                    connection.query(sql, function (err, result) {
                         if (err) throw err
                         // res.send({
                         //     message: 'Add to Order Succes!'
@@ -69,7 +70,7 @@ const tblOrderController = {
             if (err) throw err;
             connection.query(query, (err, orderArr) => {
                 if (err) throw err
-                console.log(orderArr);
+                // console.log(orderArr);
                 res.send(orderArr)
             })
         })

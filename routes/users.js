@@ -14,7 +14,7 @@ const userController = require('../components/users/user_controller');
 
 router.get('/', userController.getAll);
 router.get('/infor/:username', userController.getById);
-router.post('/infor/status', userController.banUser);
+router.post('/infor/status', userController.updateStatus);
 
 
 module.exports = router;

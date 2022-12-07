@@ -17,12 +17,12 @@ const tblController = {
     // },
     postcart: (req, res) => {
         let data = req.body;
-        console.log("aaaaaaa" + data.USERNAME);
         let sql = 'SELECT a.QUANTITY, b.IMAGE, b.FOODNAME, b.PRICE, a.FOODID FROM yummyfood.tblcart a,yummyfood.tblfood b WHERE a.FOODID=b.FOODID and a.USERNAME = ?'
         pool.getConnection((err, connection) => {
             if (err) throw err;
             connection.query(sql, [data.USERNAME], (err, response) => {
                 if (err) throw err
+                console.log(response)
                 res.send(response);
             })
         })
@@ -55,13 +55,12 @@ const tblController = {
         let data = req.body;
         let sql = 'UPDATE tblcart SET QUANTITY = ? WHERE FOODID = ? AND USERNAME = ?'
         pool.getConnection((err, connection) => {
-            if(err) throw err
+            if (err) throw err
             connection.query(sql, [data.QUANTITY, data.FOODID, data.USERNAME], (err, response) => {
                 if (err) throw err
-                res.send({message: 'Update success' })
+                res.send({ message: 'Update success' })
             })
         })
-    }
-
+    },
 }
 module.exports = tblController;

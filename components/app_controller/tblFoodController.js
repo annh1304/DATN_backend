@@ -5,7 +5,7 @@ const pool = require('../../web_connect');
 const tblFoodController = {
 
     getfood: (req, res) => {
-        let sql = 'SELECT * FROM tblfood'
+        let sql = "SELECT * FROM tblfood WHERE STATUS != 'removed'"
         pool.getConnection((err, connection) => {
             if (err) throw err;
             connection.query(sql, (err, response) => {
@@ -68,29 +68,64 @@ const tblFoodController = {
             })
         })
     },
+
     deleteFavourite: (req, res) => {
-        const { USERNAME , FOODID } = req.body;
+        const { USERNAME, FOODID } = req.body;
         let sql = `DELETE FROM tblfavourite WHERE USERNAME ='${USERNAME}' AND FOODID = ${FOODID}`;
         pool.getConnection((err, connection) => {
             if (err) throw err;
             connection.query(sql, (err, response) => {
                 if (err) throw err;
-                    res.send({ message: 'Unliked' })
+                res.send({ message: 'Unliked' })
             })
         })
     },
-    checkFavourite: (req, res) => {
+
+    checkFavourite: async (req, res) => {
+        let msg = {};
         const { FOODID, USERNAME } = req.query;
+
         const sql = `SELECT * FROM tblfavourite WHERE USERNAME ='${USERNAME}' AND FOODID = ${FOODID}`
-        pool.getConnection((err, connection) => {
+        await pool.getConnection(async (err, connection) => {
             if (err) throw err;
-            connection.query(sql, (err, response) => {
+
+            await connection.query(sql, async (err, response) => {
                 if (err) throw err;
                 if (response.length == 0) {
-                    res.send({ message: 'Not liked' })
+                    // res.send({ MESSAGE: 'Not liked' })
+                    msg.MESSAGE = 'Not liked';
                 } else if (response[0].USERNAME === USERNAME) {
-                    res.send({ message: 'Liked' })
+                    // res.send({ MESSAGE: 'Liked' })
+                    msg.MESSAGE = 'Liked';
                 }
+
+                const query = `SELECT tblorder.ORDERID, tblorder.USERNAME, tblorder.ORDSTATUS 
+                FROM tblorder INNER JOIN tblorderdetail on tblorder.ORDERID = tblorderdetail.ORDERID 
+                WHERE ORDSTATUS=3 AND tblorder.USERNAME = '${USERNAME}' AND tblorderdetail.FOODID = ${FOODID}`;
+
+                await connection.query(query, async (err, response) => {
+                    if (err) throw err;
+                    if (response.length == 0) {
+                        msg.MESSAGE2 = 'Havent bought';
+                    } else if (response[0].USERNAME === USERNAME) {
+                        msg.MESSAGE2 = 'Bought';
+                    }
+
+                    const query2 = `SELECT QUANTITY FROM tblcart WHERE USERNAME = '${USERNAME}' AND FOODID = ${FOODID}`;
+
+                    await connection.query(query2, (err, response) => {
+                        if (err) throw err;
+                        if (response.length == 0) {
+                            msg.MESSAGE3 = 'Not in cart';
+                        } else if (response[0].QUANTITY != 0) {
+                            msg.MESSAGE3 = 'In cart';
+                        }
+                        // console.log(msg)
+                        res.send(msg);
+                    })
+                    // res.send(msg);
+                })
+
             })
         })
     },
@@ -106,7 +141,7 @@ const tblFoodController = {
         })
     },
     postComment: (req, res) => {
-        const { FOODID,USERNAME , COMMENT } = req.body;
+        const { FOODID, USERNAME, COMMENT } = req.body;
         let sql = `INSERT INTO tblcomment (FOODID,USERNAME,COMMENT) VALUES (${FOODID},'${USERNAME}','${COMMENT}')`;
         pool.getConnection((err, connection) => {
             if (err) throw err;
