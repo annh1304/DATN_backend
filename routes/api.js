@@ -21,9 +21,7 @@ router.put("/updatecart", cartCtrl.updatecart);
 //food 
 // router.get("/getfood", foodCtrl.getfood);
 router.get("/getfood", foodCtrl.getfood);
-router.get("/getfoodPopular", foodCtrl.getfoodPopular);
-router.get("/getfoodFeatured", foodCtrl.getfoodFeatured);
-router.get("/getfoodNew", foodCtrl.getfoodNew);
+router.get("/foodByStatus", foodCtrl.foodByStatus);
 
 // //comment
 router.get("/getcomment", foodCtrl.getComment);

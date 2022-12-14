@@ -14,28 +14,10 @@ const tblFoodController = {
             })
         })
     },
-    getfoodPopular: (req, res) => {
-        let sql = 'SELECT * FROM tblfood WHERE tblfood.STATUS = "hot"'
-        pool.getConnection((err, connection) => {
-            if (err) throw err;
-            connection.query(sql, (err, response) => {
-                if (err) console.log(err)
-                res.send(response)
-            })
-        })
-    },
-    getfoodFeatured: (req, res) => {
-        let sql = 'SELECT * FROM tblfood WHERE tblfood.STATUS = "featured"'
-        pool.getConnection((err, connection) => {
-            if (err) throw err;
-            connection.query(sql, (err, response) => {
-                if (err) console.log(err)
-                res.send(response)
-            })
-        })
-    },
-    getfoodNew: (req, res) => {
-        let sql = 'SELECT * FROM tblfood WHERE tblfood.STATUS = "new"'
+    //hot(popular), featured, new
+    foodByStatus: (req, res) => {
+        const { status } = req.query;
+        let sql = `SELECT * FROM tblfood WHERE tblfood.STATUS = "${status}"`
         pool.getConnection((err, connection) => {
             if (err) throw err;
             connection.query(sql, (err, response) => {
@@ -46,7 +28,7 @@ const tblFoodController = {
     },
     getFavouriteList: (req, res) => {
         const { USERNAME } = req.query;
-        const query = `SELECT tblfood.FOODID , tblfood.FOODNAME , tblfood.PRICE , tblfood.IMAGE FROM ((tblfavourite INNER JOIN tblfood ON tblfavourite.FOODID = tblfood.FOODID) INNER JOIN tbluser ON tblfavourite.USERNAME = tbluser.USERNAME ) WHERE tbluser.USERNAME = '${USERNAME}'`;
+        const query = `SELECT tblfood.FOODID , tblfood.FOODNAME , tblfood.PRICE , tblfood.IMAGE FROM ((tblfavourite INNER JOIN tblfood ON tblfavourite.FOODID = tblfood.FOODID) INNER JOIN tbluser ON tblfavourite.USERNAME = tbluser.USERNAME ) WHERE tblfood.STATUS != "removed" AND tbluser.USERNAME = '${USERNAME}'`;
         pool.getConnection((err, connection) => {
             if (err) throw err;
             connection.query(query, (err, favouriteList) => {
