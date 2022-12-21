@@ -55,6 +55,10 @@ router.get("/orderList", orderCtrl.orderHistory);
 //history detail
 router.get("/orderList/detail", orderCtrl.orderHistoryDetail);
 
+//voucher
+router.post("/voucher", orderCtrl.postvoucher);
+router.put("/updatevoucher", orderCtrl.updatevoucher);
+
 module.exports = router;
 
 

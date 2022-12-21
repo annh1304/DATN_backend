@@ -8,7 +8,7 @@ const tblOrderController = {
         const data = req.body;
         pool.getConnection((err, connection) => {
             if (err) throw err;
-            connection.query('INSERT INTO tblorder( `USERNAME`, `ADDRESS`, `PHONENUMBER`, `PAYMENTID`, `ORDSTATUS`) VALUES (?,?,?,1,2)', [data.USERNAME, data.ADDRESS, data.PHONENUMBER], (err, response) => {
+            connection.query('INSERT INTO tblorder( `USERNAME`, `ADDRESS`, `PHONENUMBER`, `VOUCHERDETAIL`, `PAYMENTID`, `ORDSTATUS`) VALUES (?,?,?,?,1,2)', [data.USERNAME, data.ADDRESS, data.PHONENUMBER, data.VOUCHERDETAIL], (err, response) => {
                 if (err) throw err
                 res.send({ message: 'Insert order success!' });
 
@@ -74,7 +74,33 @@ const tblOrderController = {
                 res.send(orderArr)
             })
         })
+    },
+
+    //Voucher
+    postvoucher: (req, res) => {
+        let data = req.body;
+        let sql = 'SELECT VOUCHERDETAIL, QUANTITY FROM tblvoucher WHERE VOUCHERCODE = ? '
+        pool.getConnection((err, connection) => {
+            if (err) throw err;
+            connection.query(sql, [data.VOUCHERCODE], (err, response) => {
+                if (err) throw err
+                res.send(response)
+            })
+        })
+    },
+
+    updatevoucher: (req, res) => {
+        let data = req.body;
+        let sql = 'UPDATE tblvoucher SET QUANTITY = ? WHERE VOUCHERDETAIL = ?'
+        pool.getConnection((err, connection) => {
+            if(err) throw err
+            connection.query(sql, [data.QUANTITY, data.VOUCHERDETAIL], (err, response) => {
+                if (err) throw err
+                res.send({message: 'Update success' })
+            })
+        })
     }
+
 }
 module.exports = tblOrderController;
 
