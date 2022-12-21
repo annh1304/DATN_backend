@@ -1,6 +1,8 @@
 const productService = require('./product_service');
 const categoryService = require('../categories/category_service');
 const pool = require('../../web_connect');
+const storageUploader = require('../../middleware/firebase_storage');
+var fs = require('fs');
 
 exports.getAll = async (req, res) => {
     if (!req.session || !req.session.user) {
@@ -14,7 +16,7 @@ exports.getAll = async (req, res) => {
             if (err) throw err; // not connected
 
             // connection.query(`SELECT TBLFOOD.FOODID, TBLFOOD.FOODNAME, TBLFOOD.PRICE, TBLFOOD.IMAGE, TBLFOOD.STATUS, TBLCATEGORIES.CATNAME FROM TBLFOOD INNER JOIN TBLCATEGORIES ON TBLFOOD.CATID = TBLCATEGORIES.CATID WHERE TBLFOOD.FOODID BETWEEN ${parseInt(from) + 1} AND ${tO}`, (err, rows) => {
-            connection.query(`SELECT tblfood.FOODID, tblfood.FOODNAME, tblfood.PRICE, tblfood.IMAGE, tblfood.STATUS, tblcategories.CATNAME FROM tblfood INNER JOIN tblcategories ON tblfood.CATID = tblcategories.CATID LIMIT 5 OFFSET ${skip}`, (err, rows) => {
+            connection.query(`SELECT tblfood.FOODID, tblfood.FOODNAME, tblfood.PRICE, tblfood.IMAGE, tblfood.STATUS, tblcategories.CATNAME FROM tblfood INNER JOIN tblcategories ON tblfood.CATID = tblcategories.CATID ORDER BY tblfood.FOODID LIMIT 5 OFFSET ${skip}`, (err, rows) => {
                 connection.release();
                 if (!err) {
                     rows = rows.map(row => {
@@ -94,7 +96,10 @@ exports.update = async (req, res) => {
 
     delete body.image;
     if (file) {
-        let image = `/images/data/${file.filename}`;
+        //up hinh len firebase
+        let image = await storageUploader.uploadFile(file.path, file.filename);
+        // xóa hình hiện tại trong sv;
+        fs.unlinkSync(file.path);
         body = {
             ...body,
             image: image
@@ -149,10 +154,14 @@ exports.addFoodForm = async (req, res) => {
 exports.addFood = async (req, res) => {
     let query;
     let { body, file } = req;
+    console.log('image test', file);
 
     delete body.image;
     if (file) {
-        let image = `/images/data/${file.filename}`;
+        //up hinh len firebase
+        let image = await storageUploader.uploadFile(file.path, file.filename);
+        // xóa hình hiện tại trong sv;
+        fs.unlinkSync(file.path);
         body = {
             ...body,
             image: image

@@ -1,6 +1,5 @@
 const pool = require('../../web_connect');
 
-
 exports.getAll = async (req, res) => {
     if (!req.session || !req.session.user) {
         res.redirect('/dang-nhap');

@@ -103,9 +103,10 @@ exports.getById = async (req, res) => {
     }
 }
 
-exports.banUser = async (req, res) => {
-    const { username } = req.body;
-    const query = `UPDATE tbluser SET STATUS = 'banned' WHERE USERNAME = '${username}'`
+exports.updateStatus = async (req, res) => {
+    const { username, stat } = req.body;
+    const query = `UPDATE tbluser SET STATUS = '${stat}' WHERE USERNAME = '${username}'`;
+
     pool.getConnection((err, connection) => {
         if (err) throw err;
         connection.query(query, (err, response) => {

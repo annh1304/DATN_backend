@@ -1,6 +1,5 @@
 const { response } = require('express');
 const pool = require('../../web_connect');
-const ip = require('../../constants').IP;
 
 // exports.getAll = async (req, res) => {
 //     if (!req.session || !req.session.user) {
@@ -66,8 +65,6 @@ exports.getAll = async (req, res) => {
                             });
                         });
                     });
-
-
                 });
             });
         });

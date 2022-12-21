@@ -417,10 +417,19 @@
                                         </div>
                                     </div>
                                     {{!-- <button type="submit" class="btn btn-primary me-2">Submit</button> --}}
+                                    {{#if this.STATUS}}
                                     <div class="form-group row">
-                                        <button class="btn btn-danger col-sm-3"
+                                        <input name="stat" type="hidden" value="active">
+                                        <button class="btn btn-success btn-rounded btn-fw"
+                                            style="align-self: flex-end; width: 100px;" type="submit">UNBAN</button>
+                                    </div>
+                                    {{else}}
+                                    <div class="form-group row">
+                                        <input name="stat" type="hidden" value="banned">
+                                        <button class="btn btn-danger btn-rounded btn-fw"
                                             style="align-self: flex-end; width: 100px;" type="submit">BAN</button>
                                     </div>
+                                    {{/if}}
                                 </form>
                                 {{/each}}
                             </div>

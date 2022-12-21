@@ -39,8 +39,9 @@ exports.getAll = async (req, res) => {
 function getLabels(rows) {
 
     let labels = [];
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < rows.length; i++) {
         labels.push(rows[i].FOODNAME);
+        if (i === 2) break;
     }
     labels.push('khác');
     console.log('labels', labels);
@@ -57,11 +58,12 @@ function getValues(rows) {
     for (let i = 0; i < rows.length; i++) {
         generalVal += Number(rows[i].SOLDTOTAL);
     }
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < rows.length; i++) {
         percentt = 100 / generalVal * Number(rows[i].SOLDTOTAL);
         percentt = Math.round(percentt * 100) / 100;
         percenttOther -= percentt;
         valuess.push(percentt);
+        if (i === 2) break;
     }
     valuess.push(Math.round(percenttOther * 100) / 100);
     // console.log('valuess', valuess);
