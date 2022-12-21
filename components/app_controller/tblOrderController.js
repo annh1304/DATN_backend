@@ -1,6 +1,6 @@
 const util = require('util')
 const mysql = require('mysql')
-const pool = require('../../web_connect'); 
+const pool = require('../../web_connect');
 
 const tblOrderController = {
 
@@ -8,7 +8,7 @@ const tblOrderController = {
         const data = req.body;
         pool.getConnection((err, connection) => {
             if (err) throw err;
-            connection.query('INSERT INTO tblorder( `USERNAME`, `ADDRESS`, `PHONENUMBER`, `PAYMENTID`, `ORDSTATUS`) VALUES (?,?,?,1,2)', [data.USERNAME, data.ADDRESS, data.PHONENUMBER], (err, response) => {
+            connection.query('INSERT INTO tblorder( `USERNAME`, `ADDRESS`, `PHONENUMBER`, `VOUCHERDETAIL`, `PAYMENTID`, `ORDSTATUS`) VALUES (?,?,?,?,1,2)', [data.USERNAME, data.ADDRESS, data.PHONENUMBER, data.VOUCHERDETAIL], (err, response) => {
                 if (err) throw err
                 res.send({ message: 'Insert order success!' });
 
@@ -18,7 +18,8 @@ const tblOrderController = {
                     // res.send({message: 'Get orderid success!'})
                     console.log("OrderId:", orderid[0].ORDERID);
                     //Từ orderid có được thực hiện query để add dữ liệu từ cart sang orderdetail trên orđerid
-                    connection.query('INSERT INTO tblorderdetail (ORDERID, FOODID, QUANTITY) SELECT ?, tblcart.FOODID, tblcart.QUANTITY FROM tblcart WHERE tblcart.USERNAME = ?', [orderid[0].ORDERID, data.USERNAME], function (err, result) {
+                    const sql = `INSERT INTO tblorderdetail (ORDERID, FOODID, QUANTITY, TOTAL) SELECT ${orderid[0].ORDERID}, tblcart.FOODID, tblcart.QUANTITY, tblcart.QUANTITY*tblfood.PRICE AS TOTAL FROM (tblcart INNER JOIN tblfood ON tblcart.FOODID = tblfood.FOODID) WHERE tblcart.USERNAME = '${data.USERNAME}'`;
+                    connection.query(sql, function (err, result) {
                         if (err) throw err
                         // res.send({
                         //     message: 'Add to Order Succes!'
@@ -69,11 +70,37 @@ const tblOrderController = {
             if (err) throw err;
             connection.query(query, (err, orderArr) => {
                 if (err) throw err
-                console.log(orderArr);
+                // console.log(orderArr);
                 res.send(orderArr)
             })
         })
+    },
+
+    //Voucher
+    postvoucher: (req, res) => {
+        let data = req.body;
+        let sql = 'SELECT VOUCHERDETAIL, QUANTITY FROM tblvoucher WHERE VOUCHERCODE = ? '
+        pool.getConnection((err, connection) => {
+            if (err) throw err;
+            connection.query(sql, [data.VOUCHERCODE], (err, response) => {
+                if (err) throw err
+                res.send(response)
+            })
+        })
+    },
+
+    updatevoucher: (req, res) => {
+        let data = req.body;
+        let sql = 'UPDATE tblvoucher SET QUANTITY = ? WHERE VOUCHERDETAIL = ?'
+        pool.getConnection((err, connection) => {
+            if(err) throw err
+            connection.query(sql, [data.QUANTITY, data.VOUCHERDETAIL], (err, response) => {
+                if (err) throw err
+                res.send({message: 'Update success' })
+            })
+        })
     }
+
 }
 module.exports = tblOrderController;
 

@@ -63,5 +63,6 @@ const tblController = {
         })
     }
 
+    
 }
 module.exports = tblController;

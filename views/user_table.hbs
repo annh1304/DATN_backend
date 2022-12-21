@@ -407,6 +407,11 @@
                                     </table>
                                 </div>
                             </div>
+                            <div class="changePageContainer">
+                                <a class="previousBtn" onclick="changePage(false)">&laquo; Previous</a>
+                                <h4 type="number" id="pageNumber" class="pageNumber"></h4>
+                                <a class="nextBtn" onclick="changePage(true)">Next &raquo;</a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -456,4 +461,34 @@
                     }
                 });
         }
+
+        //lấy queryString từ url
+        const queryString = window.location.search;
+        //console.log(queryString);
+        // ?page=...&size=...
+        const urlParams = new URLSearchParams(queryString);
+        const page = urlParams.get('page');
+        console.log(page);
+
+        //set số  trang hiện tại vào h4
+        //let numb = document.getElementById("pageNumber").innerHTML;
+        document.getElementById("pageNumber").innerHTML = page;
+
+
+        function changePage(stat) {
+            // Start position 
+
+            if (stat == true) {
+                //console.log(page);
+                const url = `/nguoi-dung?page=${parseInt(page) + 1}`;
+                window.location.replace(url);
+            } else if (stat == false) {
+                if (parseInt(page) != 1) {
+                    const url = `/nguoi-dung?page=${parseInt(page) - 1}`;
+                    window.location.replace(url);
+                }
+
+            }
+        }
+
     </script>

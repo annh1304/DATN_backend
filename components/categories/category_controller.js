@@ -29,7 +29,12 @@ exports.create = async (req, res) => {
     let { body, file } = req;
     console.log(body.image);
     delete body.image;
-    let image = `/images/data/${file.filename}`;
+
+    //up hinh len firebase
+    let image = await storageUploader.uploadFile(file.path, file.filename);
+    // xóa hình hiện tại trong sv;
+    fs.unlinkSync(file.path);
+
     body = {
         ...body,
         image: image

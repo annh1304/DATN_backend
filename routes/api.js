@@ -21,13 +21,17 @@ router.put("/updatecart", cartCtrl.updatecart);
 //food 
 // router.get("/getfood", foodCtrl.getfood);
 router.get("/getfood", foodCtrl.getfood);
-router.get("/getfoodPopular", foodCtrl.getfoodPopular);
-router.get("/getfoodFeatured", foodCtrl.getfoodFeatured);
-router.get("/getfoodNew", foodCtrl.getfoodNew);
+router.get("/foodByStatus", foodCtrl.foodByStatus);
+
+// //comment
+router.get("/getcomment", foodCtrl.getComment);
+router.post("/postcomment", foodCtrl.postComment);
+
 // //favourite
 router.get("/getfavourite", foodCtrl.getFavouriteList);
 router.get("/checkfavourite", foodCtrl.checkFavourite);
 router.post("/postfavourite", foodCtrl.postFavourite);
+router.post("/deletefavourite", foodCtrl.deleteFavourite);
 
 //type food (menu)
 router.get("/gettypefood", typeFoodCtrl.gettypefood);
@@ -50,6 +54,10 @@ router.post("/postorder", orderCtrl.updateorder);
 router.get("/orderList", orderCtrl.orderHistory);
 //history detail
 router.get("/orderList/detail", orderCtrl.orderHistoryDetail);
+
+//voucher
+router.post("/voucher", orderCtrl.postvoucher);
+router.put("/updatevoucher", orderCtrl.updatevoucher);
 
 module.exports = router;
 
