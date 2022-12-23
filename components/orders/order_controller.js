@@ -1,4 +1,10 @@
 const pool = require('../../web_connect');
+const firebaseAdmin = require('../../middleware/firebase_storage');
+let constant = require('../../constants');
+
+//đọc file tokens;
+const fs = require('fs');
+const path = require('path');
 
 exports.getAll = async (req, res) => {
     if (!req.session || !req.session.user) {
@@ -44,7 +50,8 @@ exports.getById = async (req, res) => {
         res.redirect('/dang-nhap');
     } else {
         const { id, username } = req.params;
-        const query = `SELECT tblfood.FOODID , tblfood.FOODNAME, tblfood.PRICE , tblfood.IMAGE, tblorderdetail.QUANTITY , tblorderdetail.TOTAL, tblorder.ADDRESS, tblorder.PHONENUMBER, tblorder.ORDSTATUS
+        const query = `SELECT tblfood.FOODID , tblfood.FOODNAME, tblfood.PRICE , tblfood.IMAGE, tblorderdetail.QUANTITY , tblorderdetail.TOTAL
+        , tblorder.ADDRESS, tblorder.PHONENUMBER, tblorder.ORDSTATUS, tblorder.VOUCHERDETAIL
         FROM (tblorderdetail INNER JOIN tblfood ON tblorderdetail.FOODID = tblfood.FOODID)
         INNER JOIN tblorder ON tblorderdetail.ORDERID = tblorder.ORDERID  WHERE tblorder.USERNAME = '${username}'  AND tblorder.ORDERID = ${id} AND tblorder.ORDSTATUS != 1`;
         //getFood;
@@ -68,7 +75,8 @@ exports.getById = async (req, res) => {
                 const usernameAdmin = req.session.user.USERNAME;
                 const address = ordDetail[0].ADDRESS;
                 const phone = ordDetail[0].PHONENUMBER;
-                res.render('orders_detail', { ordDetail, username, total, id, isPending, usernameAdmin, address, phone });
+                const voucher = ordDetail[0].VOUCHERDETAIL;
+                res.render('orders_detail', { ordDetail, username, total, id, isPending, usernameAdmin, address, phone, voucher });
             });
         });
     }
@@ -84,6 +92,23 @@ exports.confirmOrder = async (req, res) => {
         connection.query(query, (err, rows) => {
             connection.release();
             if (!err) {
+
+                //đọc file
+                let rawdata = fs.readFileSync(path.resolve(__dirname, '../../tokens.json'));
+                let tokens = JSON.parse(rawdata);
+
+                let registrationTokens = constant.getTokenObjectByUsername(tokens, username);
+                registrationTokens.push('abc')
+
+                const message = {
+                    notification: {
+                        title: 'Order confirmation',
+                        body: `Your Order#${ordid} been comfirmed`
+                    },
+                    tokens: registrationTokens,
+                }
+
+                firebaseAdmin.NotiDeliver(message);
                 res.redirect('/don-hang');
             } else {
                 console.log(err);
@@ -102,6 +127,23 @@ exports.cancelOrder = async (req, res) => {
         connection.query(query, (err, rows) => {
             connection.release();
             if (!err) {
+
+                //đọc file
+                let rawdata = fs.readFileSync(path.resolve(__dirname, '../../tokens.json'));
+                let tokens = JSON.parse(rawdata);
+
+                let registrationTokens = constant.getTokenObjectByUsername(tokens, username);
+                // console.log('test', registrationTokens);
+                registrationTokens.push('abc')
+                const message = {
+                    notification: {
+                        title: 'Order cancelation',
+                        body: `Your Order#${ordid} been canceled`
+                    },
+                    tokens: registrationTokens,
+                }
+
+                firebaseAdmin.NotiDeliver(message);
                 res.redirect('/don-hang');
             } else {
                 console.log(err);
@@ -110,75 +152,6 @@ exports.cancelOrder = async (req, res) => {
     });
 }
 
-exports.addFoodForm = async (req, res) => {
-    if (!req.session || !req.session.user) {
-        res.redirect('/dang-nhap');
-    } else {
-        pool.getConnection((err, connection) => {
-            if (err) throw err; // not connected
-
-            connection.query(`SELECT CATID, CATNAME FROM tblcategories`, (err, categories) => {
-                connection.release();
-                if (!err) {
-
-                    res.render('empty_product_form', { categories, status });
-                } else {
-                    console.log(err);
-                }
-            })
-        });
-    }
-}
-
-exports.addFood = async (req, res) => {
-    let query;
-    let { body, file } = req;
-
-    delete body.image;
-    if (file) {
-        let image = `/images/data/${file.filename}`;
-        body = {
-            ...body,
-            image: image
-        };
-        query = `INSERT INTO tblfood (FOODNAME, QUANTITY, PRICE, CATID, STATUS, IMAGE)
-            VALUES ('${body.name}', ${body.quantity}, ${body.price}, ${body.category_id}, ${body.status}, '${body.image}');`;
-    }
-    if (!body.image) {
-        delete body.image;
-
-        query = `INSERT INTO tblfood (FOODNAME, QUANTITY, PRICE, CATID, STATUS)
-            VALUES ('${body.name}', ${body.quantity}, ${body.price}, ${body.category_id}, ${body.status});`;
-    }
-
-    console.log('body', body);
-
-    pool.getConnection((err, connection) => {
-        if (err) throw err;
-
-        connection.query(query, (err, rows) => {
-            connection.release();
-            if (!err) {
-                res.redirect('/san-pham?size=5&page=1');
-            } else {
-                console.log(err);
-            }
-        })
-    })
-}
-
-
-
-let status = [{
-    "_id": 1,
-    "name": 'new'
-}, {
-    "_id": 2,
-    "name": "hot"
-}, {
-    "_id": 3,
-    "name": "removed"
-}]
 
 
 

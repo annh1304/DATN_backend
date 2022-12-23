@@ -4,8 +4,19 @@ const nodemailer = require("nodemailer");
 const pool = require('../../web_connect');
 const ip = require('../../constants').IP;
 const baseIp = require('../../constants').baseip;
+let constant = require('../../constants');
 const bcrypt = require('bcryptjs');
+//token reset password
 let tempToken;
+
+//đọc file tokens;
+const fs = require('fs');
+const path = require('path');
+
+//đọc file tokens;
+// let rawdata = fs.readFileSync(path.resolve(__dirname, '../../tokens.json'));
+// let tokens = JSON.parse(rawdata);
+// console.log(tokens[0].username);
 
 const tblUserController = {
     //dang-nhap
@@ -227,10 +238,53 @@ const tblUserController = {
                 })
             }
         }
+    },
+    // gui token tu user
+    sendToken: async (req, res) => {
+        const { TOKEN, USERNAME } = req.body;
+        // tokenArray.push({ token: TOKEN, username: USERNAME });
+        setChangeToken({ token: TOKEN, username: USERNAME });
+        // console.log(constant.tokenArray);
+        // console.log(constant.getTokenObjectByUsername(0));
+        res.send(USERNAME);
     }
+
 
 }
 module.exports = tblUserController;
+
+//token array onchange
+function setChangeToken(tokenObject) {
+
+    let checkExisted = false;
+    //đọc file tokens;
+    let rawdata = fs.readFileSync(path.resolve(__dirname, '../../tokens.json'));
+    let tokens = JSON.parse(rawdata);
+
+
+    console.log("check22")
+
+    tokens = tokens.map(tokenO => {
+        let t = {
+            token: tokenO.token,
+            username: tokenO.username
+        };
+        if (t.token.toString() === tokenObject.token.toString()) {
+            checkExisted = true;
+            t.username = tokenObject.username;
+        }
+        return t;
+    });
+
+    if (!checkExisted) { tokens.push(tokenObject) }
+
+    let json = JSON.stringify(tokens); //convert it back to json
+    fs.writeFile('./tokens.json', json, 'utf8', function (err) {
+        if (err) throw err;
+    }); // write it back
+
+    // if (!checkExisted) { constant.tokenArray.push(tokenObject) }
+}
 //gửi mail
 function mailSender(email, fullname, username, token) {
     const ipSend = ip + `/${username}/${token}`;

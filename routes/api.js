@@ -45,6 +45,7 @@ router.get("/getuser-infor", userCtrl.getUserInfor);
 router.post("/reset-password-request", userCtrl.reqMail);
 router.get("/reset-password-form/:username/:token", userCtrl.newPwForm);
 router.post("/new-password-send", userCtrl.newPwSend);
+router.post("/send-token", userCtrl.sendToken);
 
 //order
 router.get("/getorder", orderCtrl.getorder);

@@ -8,15 +8,16 @@ exports.getAll = async (req, res) => {
     if (!req.session || !req.session.user) {
         res.redirect('/dang-nhap');
     } else {
-        const page = req.query.page;
-        const skip = (parseInt(page) - 1) * 5;
+        const { page, size } = req.query;
+        if (!page) res.redirect('/san-pham?size=5&page=1');
+        const skip = (parseInt(page) - 1) * size;
         // const tO = parseInt(page) * 5;
 
         pool.getConnection((err, connection) => {
             if (err) throw err; // not connected
 
             // connection.query(`SELECT TBLFOOD.FOODID, TBLFOOD.FOODNAME, TBLFOOD.PRICE, TBLFOOD.IMAGE, TBLFOOD.STATUS, TBLCATEGORIES.CATNAME FROM TBLFOOD INNER JOIN TBLCATEGORIES ON TBLFOOD.CATID = TBLCATEGORIES.CATID WHERE TBLFOOD.FOODID BETWEEN ${parseInt(from) + 1} AND ${tO}`, (err, rows) => {
-            connection.query(`SELECT tblfood.FOODID, tblfood.FOODNAME, tblfood.PRICE, tblfood.IMAGE, tblfood.STATUS, tblcategories.CATNAME FROM tblfood INNER JOIN tblcategories ON tblfood.CATID = tblcategories.CATID ORDER BY tblfood.FOODID LIMIT 5 OFFSET ${skip}`, (err, rows) => {
+            connection.query(`SELECT tblfood.FOODID, tblfood.FOODNAME, tblfood.PRICE, tblfood.IMAGE, tblfood.STATUS, tblcategories.CATNAME FROM tblfood INNER JOIN tblcategories ON tblfood.CATID = tblcategories.CATID ORDER BY tblfood.FOODID LIMIT ${size} OFFSET ${skip}`, (err, rows) => {
                 connection.release();
                 if (!err) {
                     rows = rows.map(row => {
