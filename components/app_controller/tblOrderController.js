@@ -8,7 +8,7 @@ const tblOrderController = {
         const data = req.body;
         pool.getConnection((err, connection) => {
             if (err) throw err;
-            connection.query('INSERT INTO tblorder( `USERNAME`, `ADDRESS`, `PHONENUMBER`, `VOUCHERDETAIL`, `PAYMENTID`, `ORDSTATUS`) VALUES (?,?,?,?,1,2)', [data.USERNAME, data.ADDRESS, data.PHONENUMBER, data.VOUCHERDETAIL], (err, response) => {
+            connection.query('INSERT INTO tblorder( `USERNAME`, `ADDRESS`, `PHONENUMBER`, `VOUCHERCODE`, `PAYMENTID`, `ORDSTATUS`) VALUES (?,?,?,?,1,2)', [data.USERNAME, data.ADDRESS, data.PHONENUMBER, data.VOUCHERCODE], (err, response) => {
                 if (err) throw err
                 res.send({ message: 'Insert order success!' });
 
@@ -79,10 +79,10 @@ const tblOrderController = {
     //Voucher
     postvoucher: (req, res) => {
         let data = req.body;
-        let sql = 'SELECT VOUCHERDETAIL, QUANTITY FROM tblvoucher WHERE VOUCHERCODE = ? '
+        let sql = 'SELECT tblvoucher.VOUCHERCODE, tblvoucher.VOUCHER, tblvoucher.QUANTITY FROM tblvoucher RIGHT JOIN tblorder ON tblvoucher.VOUCHERCODE != tblorder.VOUCHERCODE WHERE USERNAME = ? AND tblvoucher.VOUCHERCODE = ? AND tblvoucher.QUANTITY > 0'
         pool.getConnection((err, connection) => {
             if (err) throw err;
-            connection.query(sql, [data.VOUCHERCODE], (err, response) => {
+            connection.query(sql, [data.USERNAME, data.VOUCHERCODE], (err, response) => {
                 if (err) throw err
                 res.send(response)
             })
