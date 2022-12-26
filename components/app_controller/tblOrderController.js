@@ -6,6 +6,9 @@ const tblOrderController = {
 
     updateorder: (req, res) => {
         const data = req.body;
+        if (data.VOUCHERCODE == "") {
+            data.VOUCHERCODE = null;
+        }
         pool.getConnection((err, connection) => {
             if (err) throw err;
             connection.query('INSERT INTO tblorder( `USERNAME`, `ADDRESS`, `PHONENUMBER`, `VOUCHERCODE`, `PAYMENTID`, `ORDSTATUS`) VALUES (?,?,?,?,1,2)', [data.USERNAME, data.ADDRESS, data.PHONENUMBER, data.VOUCHERCODE], (err, response) => {
@@ -78,11 +81,13 @@ const tblOrderController = {
 
     //Voucher
     postvoucher: (req, res) => {
-        let data = req.body;
+        const { USERNAME, VOUCHERCODE } = req.body;
+        console.log('test2', USERNAME);
+        console.log('test2', VOUCHERCODE);
         let sql = 'SELECT tblvoucher.VOUCHERCODE, tblvoucher.VOUCHER, tblvoucher.QUANTITY FROM tblvoucher RIGHT JOIN tblorder ON tblvoucher.VOUCHERCODE != tblorder.VOUCHERCODE WHERE USERNAME = ? AND tblvoucher.VOUCHERCODE = ? AND tblvoucher.QUANTITY > 0'
         pool.getConnection((err, connection) => {
             if (err) throw err;
-            connection.query(sql, [data.USERNAME, data.VOUCHERCODE], (err, response) => {
+            connection.query(sql, [USERNAME, VOUCHERCODE], (err, response) => {
                 if (err) throw err
                 res.send(response)
             })
@@ -91,12 +96,12 @@ const tblOrderController = {
 
     updatevoucher: (req, res) => {
         let data = req.body;
-        let sql = 'UPDATE tblvoucher SET QUANTITY = ? WHERE VOUCHERDETAIL = ?'
+        let sql = 'UPDATE tblvoucher SET QUANTITY = ? WHERE VOUCHER = ?'
         pool.getConnection((err, connection) => {
-            if(err) throw err
-            connection.query(sql, [data.QUANTITY, data.VOUCHERDETAIL], (err, response) => {
+            if (err) throw err
+            connection.query(sql, [data.QUANTITY, data.VOUCHER], (err, response) => {
                 if (err) throw err
-                res.send({message: 'Update success' })
+                res.send({ message: 'Update success' })
             })
         })
     }

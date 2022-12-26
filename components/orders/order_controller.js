@@ -50,10 +50,14 @@ exports.getById = async (req, res) => {
         res.redirect('/dang-nhap');
     } else {
         const { id, username } = req.params;
+        // const query = `SELECT tblfood.FOODID , tblfood.FOODNAME, tblfood.PRICE , tblfood.IMAGE, tblorderdetail.QUANTITY , tblorderdetail.TOTAL
+        // , tblorder.ADDRESS, tblorder.PHONENUMBER, tblorder.ORDSTATUS, tblorder.VOUCHERDETAIL
+        // FROM (tblorderdetail INNER JOIN tblfood ON tblorderdetail.FOODID = tblfood.FOODID)
+        // INNER JOIN tblorder ON tblorderdetail.ORDERID = tblorder.ORDERID  WHERE tblorder.USERNAME = '${username}'  AND tblorder.ORDERID = ${id} AND tblorder.ORDSTATUS != 1`;
         const query = `SELECT tblfood.FOODID , tblfood.FOODNAME, tblfood.PRICE , tblfood.IMAGE, tblorderdetail.QUANTITY , tblorderdetail.TOTAL
-        , tblorder.ADDRESS, tblorder.PHONENUMBER, tblorder.ORDSTATUS, tblorder.VOUCHERDETAIL
-        FROM (tblorderdetail INNER JOIN tblfood ON tblorderdetail.FOODID = tblfood.FOODID)
-        INNER JOIN tblorder ON tblorderdetail.ORDERID = tblorder.ORDERID  WHERE tblorder.USERNAME = '${username}'  AND tblorder.ORDERID = ${id} AND tblorder.ORDSTATUS != 1`;
+        , tblorder.ADDRESS, tblorder.PHONENUMBER, tblorder.ORDSTATUS, tblvoucher.VOUCHER
+        FROM ((tblorderdetail INNER JOIN tblfood ON tblorderdetail.FOODID = tblfood.FOODID)
+        INNER JOIN tblorder ON tblorderdetail.ORDERID = tblorder.ORDERID) LEFT JOIN tblvoucher ON tblorder.VOUCHERCODE = tblvoucher.VOUCHERCODE WHERE tblorder.USERNAME = '${username}'  AND tblorder.ORDERID = ${id} AND tblorder.ORDSTATUS != 1`;
         //getFood;
         pool.getConnection((err, connection) => {
             if (err) throw err; // not connected
@@ -68,6 +72,7 @@ exports.getById = async (req, res) => {
                     total += Number(ordDetail[i].TOTAL);
                 }
                 let isPending = true;
+                console.log("test", ordDetail[0]);
                 if (ordDetail[0].ORDSTATUS != 2) {
                     isPending = false;
                 }
@@ -75,7 +80,7 @@ exports.getById = async (req, res) => {
                 const usernameAdmin = req.session.user.USERNAME;
                 const address = ordDetail[0].ADDRESS;
                 const phone = ordDetail[0].PHONENUMBER;
-                const voucher = ordDetail[0].VOUCHERDETAIL;
+                const voucher = ordDetail[0].VOUCHER;
                 res.render('orders_detail', { ordDetail, username, total, id, isPending, usernameAdmin, address, phone, voucher });
             });
         });
